@@ -3,4 +3,11 @@
  (modules card)
  (libraries core)
  (preprocess
-  (pps ppx_jane)))
+ (pps ppx_jane)))
+
+(library
+ (name deck)
+ (modules deck)
+ (libraries core card)
+ (preprocess
+ (pps ppx_jane)))
