@@ -1,0 +1,6 @@
+(library
+ (name card)
+ (modules card)
+ (libraries core)
+ (preprocess
+  (pps ppx_jane)))

@@ -1,4 +1,4 @@
-  (lang dune 3.16)
+(lang dune 3.16)
   (generate_opam_files true)
   (authors "Yours Truly" "Truly Yours")
   (maintainers "your@email.org")
