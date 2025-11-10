@@ -1,6 +1,7 @@
 player.mli
   - name
   - player_id (for in-game)
+  - player or computer(?)
   - chip stack
   - hole cards
   - functions:
@@ -39,3 +40,7 @@ game.mli?
       - maximum raise value
   - functions:
     - depends on how we implement state, pot, and other gameplay aspects
+
+interface.mli?
+  - description: module for intepreting command-line input from players
+  - no idea if we need this, could just be implemented indirectly in main
