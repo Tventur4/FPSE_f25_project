@@ -12,7 +12,9 @@ type rank = Two | Three | Four | Five | Six | Seven | Eight | Nine | Ten | Jack 
     Comparison is ascending on the rank-value with respect to poker. Note that this is why the Ace is valued higher 
     than every other rank. *)
 
-type t [@@deriving sexp, compare, equal]
+type t =
+  { suit : suit
+  ; rank : rank} [@@deriving sexp, compare, equal]
 (** [t] is a comparable, serializable type to represent a playing card.
     It is a record containing two fields of types suit and rank, respectively. *)
 

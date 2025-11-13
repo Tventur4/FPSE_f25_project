@@ -13,7 +13,9 @@ type suit = Clubs | Diamonds | Hearts | Spades [@@deriving sexp, compare, equal]
 
 type rank = Two | Three | Four | Five | Six | Seven | Eight | Nine | Ten | Jack | Queen | King | Ace [@@deriving sexp, compare, equal]
 
-type t = { suit : suit; rank : rank} [@@deriving sexp, compare, equal]
+type t = 
+  { suit : suit
+  ; rank : rank} [@@deriving sexp, compare, equal]
 
 (*
   [suit_to_int s] is the numeric representation of [s], with [Clubs] -> 0, [Diamonds] -> 1, [Hearts] -> 2, 

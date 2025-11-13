@@ -11,3 +11,10 @@
  (libraries core card)
  (preprocess
  (pps ppx_jane)))
+
+(library
+ (name player)
+ (modules player)
+ (libraries core card)
+ (preprocess
+ (pps ppx_jane)))
