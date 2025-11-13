@@ -17,7 +17,8 @@ type t =
   ; deck : D.t 
   ; community_cards : C.t list
   ; pot : int
-  ; big_blind_value : int } [@@deriving sexp]
+  ; big_blind_value : int 
+  ; call_value : int } [@@deriving sexp]
 (** [t] is a record type representing the necessary attributes of a poker game.
     Note that for a given hand, the order of [players] determines the dealer (index 0), small blind (index 1), and 
     big blind (index 2). For the pre-flop round, the player to the left (the subsequent index) of the big blind is 
@@ -52,6 +53,38 @@ val get_big_blind_value : t -> int
 val get_small_blind_value : t -> int
 
 val get_big_bet_value : t -> int
+
+val get_call_value : t -> int
+
+val increment_hand_number : t -> t
+
+val increment_round : t -> t
+
+val increment_current_player_index : t -> t
+
+val rotate_players : t -> t
+
+val pre_flop : t -> t
+
+val flop : t -> t
+
+val turn : t -> t
+
+val river : t -> t
+
+val showdown : t -> t
+
+val small_blind_bet : t -> t
+
+val big_blind_bet : t -> t
+
+val call : t -> P.t -> t
+
+val raise : t -> P.t -> int -> t
+
+val fold : t -> P.t -> t
+
+val end_game : t -> unit
 
 
 
