@@ -18,3 +18,17 @@
  (libraries core card)
  (preprocess
  (pps ppx_jane)))
+
+(library
+ (name game)
+ (modules game)
+ (libraries core card deck player)
+ (preprocess
+ (pps ppx_jane)))
+
+(library
+ (name bot)
+ (modules bot)
+ (libraries core card player game)
+ (preprocess
+ (pps ppx_jane)))
