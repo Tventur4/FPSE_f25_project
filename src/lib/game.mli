@@ -13,6 +13,7 @@ type t =
   { hand_number : int 
   ; round : betting_round 
   ; players : P.t list
+  ; dealer_index : int
   ; deck : D.t 
   ; community_cards : C.t list
   ; pot : int
