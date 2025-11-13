@@ -36,7 +36,7 @@ let shuffle (deck : t) : t =
   @param deck The deck.
   @return The number of cards currently in [deck].
 *)
-let num_card (deck : t) : t =
+let num_cards (deck : t) : int =
   unimplemented ()
 
 (*
