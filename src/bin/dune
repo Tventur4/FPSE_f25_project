@@ -1,0 +1,8 @@
+(executable
+ (name poker)
+ (modules poker)
+ (libraries
+   core
+   game
+   cmdliner
+   ))
