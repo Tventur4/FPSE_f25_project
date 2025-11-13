@@ -32,3 +32,10 @@
  (libraries core card player game)
  (preprocess
  (pps ppx_jane)))
+
+(library
+ (name interface)
+ (modules interface)
+ (libraries core card player game)
+ (preprocess
+ (pps ppx_jane)))
