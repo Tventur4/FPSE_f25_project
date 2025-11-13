@@ -10,6 +10,7 @@ type hand = C.t list [@@deriving sexp]
 type t =
   { name : string
   ; player_id : int
+  ; folded : bool
   ; is_human : bool
   ; chip_stack : int
   ; hole_cards : C.t list} [@@deriving sexp]
@@ -22,6 +23,9 @@ val get_name : t -> string
 
 val get_player_id : t -> int
 (** [get_player_id] is the id of [player]. *)
+
+val has_folded  : t -> bool
+(** [has_folded player] is true if [player] has folded or cannot make any further bets, and otherwise false. *)
 
 val is_human : t -> bool
 (** [is_human player] is true if [player] is a human player, and false if it is a computer player. *)
