@@ -1,0 +1,8 @@
+(executable
+ (name demo_all)
+ (libraries 
+    core
+    owl
+    lwt
+    lwt.unix
+ ))
