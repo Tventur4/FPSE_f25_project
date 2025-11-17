@@ -172,7 +172,7 @@ $
 ### List of Libraries We are Planning on Using
 We will be using the following libraries: Owl, Core, Ounit2, LWT
 
-### Implementation Plan4
+### Implementation Plan
 We plan to implement the following modules/features in this order:
   - Card module (by November 17)
   - Deck module (by November 17)

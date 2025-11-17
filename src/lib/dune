@@ -20,6 +20,13 @@
  (pps ppx_jane)))
 
 (library
+ (name card_set)
+ (modules card_set)
+ (libraries core card)
+ (preprocess
+ (pps ppx_jane)))
+
+(library
  (name game)
  (modules game)
  (libraries core card deck player)

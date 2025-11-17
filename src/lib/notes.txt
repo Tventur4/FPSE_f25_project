@@ -1,0 +1,57 @@
+Bot.mli:
+- change difficulty parameter, make it more clear
+- also clarify confidence parameter
+  - dont need getters
+- make "make move" more clear--wanna see what move the bot chooses
+- action?
+  - add attributes to actions, like which player is making the move
+- illegal moves?
+  - exceptions
+- change bot.mli? reimplement? remove?
+
+Card.mli:
+  - @@deriving variants? (ppx variants)
+  - write our own to_string function
+
+Deck.mli:
+  - hide type t
+  - one canonical deck (there is a sorted deck, no unit argument)
+  - draw card (needs to modify deck) (t -> C.t * t)
+    - draw_card_exn
+  - burn card (similar, t -> t)
+    - burn_card_exn
+
+Player.mli:
+  - make "hand.mli"
+    - dont call it hand lol
+    - functions on sets of cards
+    - whats the best 5-card hand out of 7
+    - value of 5-card hand
+  - make hole cards a tuple
+    - list doesnt tell us what its structure is
+
+Game.mli:
+  - theres no "round" structure
+  - tries to combine multiple things in one, too many things
+  - break down in multiple pieces
+  - don't wanna work with indices on lists
+    - head of the list is current player? circular data structure
+    - make order embedded in data structure
+  - make community_cards its own type, make it constrained by betting round
+    - make community_cards.mli module
+  - chip count? make chip type, simply different from integer  
+  - derive getters (don't need them) or project objects
+  - rotate_players/current player index
+    - need circular data structure, could make own?
+  - pre_flop function (incredibly unclear whats going on with this function)
+    - phantom type? (reference: comparison type in map)
+    - round parameter? could be beneficial, could get in the way
+    - big_blind_bet should only be able to be called during pre-flop
+  - call, raise, fold are all just moves
+  - end_game shouldn't return unit
+  - poker is a bunch of people playing poker at a table--game should be a snapshot of the end results
+    - table module?
+    - betting_round doesn't care about hand number
+  - modularize the round stuff in game
+  - hand module? also differentiate from hand as in 2 hole cards, 5 community_cards
+  - ***SPLIT UP GAME.MLI***
