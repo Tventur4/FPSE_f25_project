@@ -46,3 +46,17 @@
  (libraries core card player game)
  (preprocess
  (pps ppx_jane)))
+
+(library
+ (name table)
+ (modules table)
+ (libraries core player) ; Todo: add other dependencies
+ (preprocess
+ (pps ppx_jane)))
+
+(library
+ (name round)
+ (modules round)
+ (libraries core player) ; Todo: add other dependencies
+ (preprocess
+ (pps ppx_jane)))
