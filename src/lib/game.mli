@@ -2,24 +2,23 @@
   The Game module defines a concrete type to represent a game of poker as well as all of the necessary functions to 
   interact with the game.
 *)
-
+module T = Table
 module C = Card
 module D = Deck
-module P = Player
+module R = Round
 
-type betting_round = PreFlop | Flop | Turn | River | Showdown [@@deriving sexp]
+(* type betting_round = PreFlop | Flop | Turn | River | Showdown [@@deriving sexp] *)
 (** [betting_round] is a serializable type to represent the current betting round in a game of Texas Hold 'Em poker. *)
 
+(*UPDATED: t now contains state of a single hand of poker*)
 type t =
-  { hand_number : int 
-  ; round : betting_round 
-  ; players : P.t list
-  ; current_player_index : int
-  ; deck : D.t 
+  { table : T.t
+  ; deck : D.t
   ; community_cards : C.t list
   ; pot : int
-  ; big_blind_value : int 
-  ; call_value : int } [@@deriving sexp]
+  ; current_round : R.round_state (*Preflop, flop, showdown.. etc.*)
+} [@@deriving sexp]
+
 (** [t] is a record type representing the necessary attributes of a poker game.
     Note that for a given hand, the order of [players] determines the dealer (index 0), small blind (index 1), and 
     big blind (index 2). For the pre-flop round, the player to the left (the subsequent index) of the big blind is 
@@ -31,10 +30,21 @@ type t =
     river rounds, bets and raises must be equal to or greater than twice the value of [big_blind_value], an amount 
     called the big bet. *)
 
-val init_game : P.t list -> int -> t
+(*deals a fresh hand using players at the teble. shuffles deck, deals hole cards, and posts blinds*)
+val init_game : T.t -> t
 (** [init_game players big_blind_value] creates and initializes a new game of poker. *)
 
-val get_hand_number : t -> int
+val current_round : t -> R.betting_round
+
+(* advanceds to next game stage and deals appropraite cards ot the board*)
+val next_street : t -> t
+
+(* procceses a player's move and updates pot/table*)
+val apply_action : t -> R.action -> (t, string) result
+
+(*Old functions from before game&table split*)
+
+(* val get_hand_number : t -> int
 (** [get_hand_number game] gets the current hand number. *)
 
 val get_round : t -> betting_round
@@ -116,7 +126,7 @@ val fold : t -> P.t -> t
 (** [fold game player] carries out the action of folding for [player]. *)
 
 val end_game : t -> unit
-(** [end_game game] ends the game of poker. *)
+* [end_game game] ends the game of poker. *)
 
 
 

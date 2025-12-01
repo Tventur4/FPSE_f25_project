@@ -4,12 +4,36 @@
   environment, including players seated, chips, dealer position, active hand/round, and turn order.
 *)
 
+(*updated: circular-ish data structure of list of players. will use first indexed position as current turn player*)
+module P = Player
+
+(*hide type*)
+type t [@@deriving sexp]
+(* 
 type table = {
   players : Player.t list;   (* seated players in order *)
   dealer : int;               (* index into players list *)
-}
+} *)
 
-val create : Player.t list -> table
+(*create ltable with players in seated order*)
+ val init : P.t list -> t
+
+(*move dealer position one spot*)
+val rotate: t -> t
+
+(*return current players at the table*)
+val current_players: t -> P.t list
+
+(*returns players who haven't folded/busted. either this method *)
+val get_active_players : t -> P.t list
+
+(*returns the player whose turn it is*)
+val get_player_at_turn : t -> P.t
+
+(*advance turn marker to the next active player*)
+val advance_turn : t -> t
+
+(* val create : Player.t list -> table
 (** Create a table with players in given seating order; dealer starts at index 0. *)
 
 val dealer_id : table -> Player.t
@@ -28,4 +52,4 @@ val next_player : table -> Player.t -> Player.t
 (** Returns the next player clockwise from the given player. *)
 
 val active_players : table -> Player.t list
-(** Returns all players seated at the table. *)
+* Returns all players seated at the table. *)
