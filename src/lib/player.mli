@@ -13,7 +13,8 @@ type t =
   ; folded : bool
   ; is_human : bool
   ; chip_stack : int
-  ; hole_cards : C.t list} [@@deriving sexp]
+  ; hole_cards : (C.t * C.t) option
+  } [@@deriving sexp]
 
 val make_player : string -> bool -> int -> t
 (** [make_player name human chips] is a new player with the specified attributes. *)
@@ -33,8 +34,8 @@ val is_human : t -> bool
 val get_chip_stack : t -> int
 (** [get_chip_stack player] is the chip stack of [player]. *)
 
-val get_hole_cards : t -> C.t list
-(** [get_hole_cards player] is a list containing the two hole cards belonging to [player]. *)
+val get_hole_cards : t -> (C.t * C.t) option
+(** [get_hole_cards player] is a tuple containing the two hole cards belonging to [player]. *)
 
 val add_chips : t -> int -> t
 (** [add_chips player n] adds [n] chips to the chip stack of [player]. *)
@@ -42,8 +43,8 @@ val add_chips : t -> int -> t
 val remove_chips : t -> int -> t
 (** [remove_chips player n] removes [n] chips from the chip stack of [player]. *)
 
-val set_hole_cards : t -> C.t list -> t
-(** [set_hole_cards player cards] sets the hole cards of [player]. *)
+val set_hole_cards : t -> (C.t C.t) -> t
+(** [set_hole_cards player cards] sets the hole cards of [player] which is now a tuple. *)
 
 val get_best_hand : t -> C.t list -> hand
 (** [get_best_hand player community_cards] is the 5-card hand with the highest possible value, constructed from the 

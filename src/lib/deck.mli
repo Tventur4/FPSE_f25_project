@@ -5,7 +5,7 @@
 
 module C = Card
 
-type t = C.t list [@@deriving sexp]
+type t (*= C.t list [@@deriving sexp] *)
 (** [t] is a serializable type to represent a deck of playing cards.
     Note that the "top" of the deck refers to the card at index 0. *)
 
@@ -18,13 +18,13 @@ val shuffle : t -> t
 val num_cards : t -> int
 (** [num_card deck] is the number of cards currently in [deck]. *)
 
-val draw_card : t -> C.t
+val draw_card : t -> C.t * t
 (** [draw_card deck] draws a single card from the top of [deck]. *)
 
 val draw_cards : t -> int -> C.t list 
 (** [draw_cards deck n] draw [n] cards from the top of [deck]. *)
 
-val burn_card : t -> unit
+val burn_card : t -> t
 (** [burn_card deck] takes a card from the top of [deck] and discards it. *)
 
 
