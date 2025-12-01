@@ -3,6 +3,7 @@
   necessary functions to interact with the round. A round of poker consists of the actions/bets/state 
   updates that occur before moving to the next round within a hand.
 *)
+module P = Player
 
 type action =
   | Fold
@@ -10,8 +11,12 @@ type action =
   | Call
   | Bet of int
   | Raise of int
+[@@deriving sexp]
+
+type betting_round = PreFlop | Flop | Turn | River | Showdown [@@deriving sexp]
 
 type round_state = {
+  stage : betting_round;
   pot : int;
   current_bet : int;
   to_act : Player.t list;      (* players in order who still need to act *)
