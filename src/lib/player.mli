@@ -46,12 +46,11 @@ val remove_chips : t -> int -> t
 val set_hole_cards : t -> (C.t C.t) -> t
 (** [set_hole_cards player cards] sets the hole cards of [player] which is now a tuple. *)
 
-val get_best_hand : t -> C.t list -> hand
+(*inside of card_set.mli*)
+(* val get_best_hand : t -> C.t list -> hand
 (** [get_best_hand player community_cards] is the 5-card hand with the highest possible value, constructed from the 
     two hole cards from [player] and the five [community_cards]. *)
 
 val value_of_hand : hand -> int
 (** [value_of_hand hand] is the value of [hand], where a high card has a value of 0, and a royal flush has a 
-    value of 9. *)
-
-
+    value of 9. *) *)
