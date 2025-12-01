@@ -9,6 +9,7 @@ module P = Player
 
 (*hide type*)
 type t [@@deriving sexp]
+
 (* 
 type table = {
   players : Player.t list;   (* seated players in order *)
