@@ -2,21 +2,17 @@
   The Game module defines a concrete type to represent a game of poker as well as all of the necessary functions to 
   interact with the game.
 *)
-module T = Table
-module C = Card
-module D = Deck
-module R = Round
 
 (* type betting_round = PreFlop | Flop | Turn | River | Showdown [@@deriving sexp] *)
 (** [betting_round] is a serializable type to represent the current betting round in a game of Texas Hold 'Em poker. *)
 
 (*UPDATED: t now contains state of a single hand of poker*)
 type t =
-  { table : T.t
-  ; deck : D.t
-  ; community_cards : C.t list
+  { table : Table.t
+  ; deck : Deck.t
+  ; community_cards : Card.t list
   ; pot : int
-  ; current_round : R.round_state (*Preflop, flop, showdown.. etc.*)
+  ; current_round : Round.round_state (*Preflop, flop, showdown.. etc.*)
 } [@@deriving sexp]
 
 (** [t] is a record type representing the necessary attributes of a poker game.

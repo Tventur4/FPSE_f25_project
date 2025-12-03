@@ -7,56 +7,56 @@
 
 (library
  (name deck)
- (modules deck)
+ (modules_without_implementation deck)
  (libraries core card)
  (preprocess
  (pps ppx_jane)))
 
 (library
  (name player)
- (modules player)
+ (modules_without_implementation player)
  (libraries core card)
  (preprocess
  (pps ppx_jane)))
 
 (library
  (name card_set)
- (modules card_set)
+ (modules_without_implementation card_set)
  (libraries core card)
  (preprocess
  (pps ppx_jane)))
 
 (library
  (name game)
- (modules game)
+ (modules_without_implementation game)
  (libraries core card deck player)
  (preprocess
  (pps ppx_jane)))
 
 (library
  (name bot)
- (modules bot)
+ (modules_without_implementation bot)
  (libraries core card player game)
  (preprocess
  (pps ppx_jane)))
 
 (library
  (name interface)
- (modules interface)
+ (modules_without_implementation interface)
  (libraries core card player game)
  (preprocess
  (pps ppx_jane)))
 
 (library
  (name table)
- (modules table)
+ (modules_without_implementation table)
  (libraries core player) ; Todo: add other dependencies
  (preprocess
  (pps ppx_jane)))
 
 (library
  (name round)
- (modules round)
+ (modules_without_implementation round)
  (libraries core player) ; Todo: add other dependencies
  (preprocess
  (pps ppx_jane)))

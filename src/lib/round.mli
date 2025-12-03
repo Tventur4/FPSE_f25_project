@@ -3,7 +3,6 @@
   necessary functions to interact with the round. A round of poker consists of the actions/bets/state 
   updates that occur before moving to the next round within a hand.
 *)
-module P = Player
 
 type action =
   | Fold

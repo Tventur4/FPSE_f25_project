@@ -1,72 +1,78 @@
 open Core
 
-[@@@ocaml.warning "-27"]
-[@@@ocaml.warning "-32"]
-
-(*
-  Placeholder for unimplemented functions.
-*)
-let unimplemented () =
-  failwith "unimplemented"
-
 type suit = Clubs | Diamonds | Hearts | Spades [@@deriving sexp, compare, equal]
+(** [suit] is a comparable, serializable type to represent the suit attribute of a playing card. 
+    Comparison is alphabetical on the string representation of the suit. *)
 
 type rank = Two | Three | Four | Five | Six | Seven | Eight | Nine | Ten | Jack | Queen | King | Ace [@@deriving sexp, compare, equal]
+(** [rank] is a comparable, serializable type to represent the rank attribute of a playing card. 
+    Comparison is ascending on the rank-value with respect to poker. Note that this is why the Ace is valued higher 
+    than every other rank. *)
 
-type t = 
+type t =
   { suit : suit
   ; rank : rank} [@@deriving sexp, compare, equal]
+(** [t] is a comparable, serializable type to represent a playing card.
+      It is a record containing two fields of types suit and rank, respectively. *)
 
-(*
-  [suit_to_int s] is the numeric representation of [s], with [Clubs] -> 0, [Diamonds] -> 1, [Hearts] -> 2, 
-  and [Spades] -> 3.
-
-  @param s Suit.
-  @return The numeric representation of [s].
-*)
 let suit_to_int (s : suit) : int =
-  unimplemented ()
+  match s with
+   | Clubs -> 0
+   | Diamonds -> 1
+   | Hearts -> 2
+   | Spades -> 3
 
-(*
-  [rank_to_int r] is the numeric representation of [r], where each rank is assigned a value from 0-12 corresponding 
-  to their rank-value with respect to poker (i.e. [rank_to_int 2] = 0 and [rank_to_int Ace] = 12).
-
-  @param r Rank.
-  @return The numeric representation of [r].
-*)
 let rank_to_int (r : rank) : int =
-  unimplemented ()
+  match r with
+  | Two -> 0
+  | Three -> 1
+  | Four -> 2
+  | Five -> 3
+  | Six -> 4
+  | Seven -> 5
+  | Eight -> 6
+  | Nine -> 7
+  | Ten -> 8
+  | Jack -> 9
+  | Queen -> 10
+  | King -> 11
+  | Ace -> 12
 
-(*
-  [card_to_int card] is the numeric representation of [card], where the card is assigned a value from 0-51
-  corresponding to its index in a 52-card deck sorted in ascending order by rank and then by suit.
-
-  @param card Input card to convert.
-  @return The numeric representation of [card].
-*)
 let card_to_int (card : t) : int =
-  unimplemented ()
+  suit_to_int(card.suit) * 13 + rank_to_int(card.rank)
 
-(*
-  [int_to_card index] converts an index (i.e. a number between 0 and 51 inclusive) into a card with appropriate 
-  suit and index. This is an inverse function to [card_to_int].
+let int_to_suit (n : int) : suit =
+  match n with
+  | 0 -> Clubs
+  | 1 -> Diamonds
+  | 2 -> Hearts
+  | 3 -> Spades 
 
-  @param index The integer index of the desired card.
-  @return The card correspdoning to [index].
-  @throws invalid_arg if [index] < 0 or [index] > 51.
-*)
-let int_to_card (index : int) : t =
-  unimplemented ()
+let int_to_rank (n : int) : rank =
+  match n with
+  | 0 -> Two 
+  | 1 -> Three
+  | 2 -> Four
+  | 3 -> Five
+  | 4 -> Six
+  | 5 -> Seven
+  | 6 -> Eight
+  | 7 -> Nine
+  | 8 -> Ten
+  | 9 -> Jack
+  | 10 -> Queen
+  | 11 -> King
+  | 12 -> Ace
 
-(*
-  [to_string card] gets the string representation of [card], with the format of "[rank] of [suit]."
-  
-  @param card The input card.
-  @return The string representation of [card].
-*)
+let int_to_card (n : int) : t = 
+  { suit = int_to_suit(n / 13) ; rank = int_to_rank(n mod 13)}
+
+let suit_to_string (s : suit) : string =
+  match s with
+   | Clubs -> "Clubs"
+   | Diamonds -> "Diamonds"
+   | Hearts -> "Hearts"
+   | Spades -> "Spades"
+
 let to_string (card : t) : string =
-  unimplemented ()
-
-
-
-
+  Sexp.to_string(sexp_of_rank(card.rank)) ^ Sexp.to_string(sexp_of_suit(card.suit))
