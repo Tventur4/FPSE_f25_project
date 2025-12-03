@@ -3,7 +3,6 @@
   manipulate, and print them.
 *)
 
-module C = Card
 
 type t (*= C.t list [@@deriving sexp] *)
 
@@ -19,10 +18,10 @@ val shuffle : t -> t
 val num_cards : t -> int
 (** [num_card deck] is the number of cards currently in [deck]. *)
 
-val draw_card : t -> C.t * t
+val draw_card : t -> Card.t * t
 (** [draw_card deck] draws a single card from the top of [deck]. *)
 
-val draw_cards : t -> int -> C.t list 
+val draw_cards : t -> int -> Card.t list 
 (** [draw_cards deck n] draw [n] cards from the top of [deck]. *)
 
 val burn_card : t -> t
