@@ -3,9 +3,7 @@
   interact with, manipulate, and print them.
 *)
 
-module C = Card
-
-type hand = C.t list [@@deriving sexp]
+type hand = Card.t list [@@deriving sexp]
 
 type t =
   { name : string
@@ -13,7 +11,7 @@ type t =
   ; folded : bool
   ; is_human : bool
   ; chip_stack : int
-  ; hole_cards : (C.t * C.t) option
+  ; hole_cards : (Card.t * Card.t) option
   } [@@deriving sexp]
 
 val make_player : string -> bool -> int -> t
@@ -34,7 +32,7 @@ val is_human : t -> bool
 val get_chip_stack : t -> int
 (** [get_chip_stack player] is the chip stack of [player]. *)
 
-val get_hole_cards : t -> (C.t * C.t) option
+val get_hole_cards : t -> (Card.t * Card.t) option
 (** [get_hole_cards player] is a tuple containing the two hole cards belonging to [player]. *)
 
 val add_chips : t -> int -> t
@@ -43,11 +41,11 @@ val add_chips : t -> int -> t
 val remove_chips : t -> int -> t
 (** [remove_chips player n] removes [n] chips from the chip stack of [player]. *)
 
-val set_hole_cards : t -> (C.t C.t) -> t
+val set_hole_cards : t -> (Card.t * Card.t) -> t
 (** [set_hole_cards player cards] sets the hole cards of [player] which is now a tuple. *)
 
 (*inside of card_set.mli*)
-(* val get_best_hand : t -> C.t list -> hand
+(* val get_best_hand : t -> Card.t list -> hand
 (** [get_best_hand player community_cards] is the 5-card hand with the highest possible value, constructed from the 
     two hole cards from [player] and the five [community_cards]. *)
 

@@ -9,9 +9,7 @@ open Core
 let unimplemented () =
   failwith "unimplemented"
 
-module C = Card
-
-type t = C.t list [@@deriving sexp]
+type t = Card.t list [@@deriving sexp]
 
 (*
   [get_deck] is a standard deck of 52 playing cards sorted in ascending order by rank and then by suit.
@@ -46,7 +44,7 @@ let num_cards (deck : t) : int =
   @return The card at the "top".
   @throws failwith if there are no cards left in [deck].
 *)
-let draw_card (deck : t) : C.t =
+let draw_card (deck : t) : Card.t =
   unimplemented ()
 
 (*
@@ -57,7 +55,7 @@ let draw_card (deck : t) : C.t =
   @return The first [n] cards drawn from the top.
   @throws failwith if there are less than [n] cards remaining in the deck.
 *)
-let draw_cards (deck : t) (n : int) : C.t list =
+let draw_cards (deck : t) (n : int) : Card.t list =
   unimplemented ()
 
 (*
