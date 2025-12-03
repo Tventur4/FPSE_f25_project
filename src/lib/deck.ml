@@ -7,7 +7,7 @@ type t = Card.t list [@@deriving sexp]
 
 (*
   [get_deck] is a standard deck of 52 playing cards sorted in ascending order by rank and then by suit.
-  2-A of clubs then diamonds then hearts then spades
+  2-A of clubs then diamonds...
 
   @return A standard deck.
 *)
@@ -72,6 +72,6 @@ let draw_cards (deck : t) (n : int) : Card.t list =
   @throws failwith if there are no cards left in [deck].
 *)
 let burn_card (deck : t) : unit =
-  draw_cards deck 1 |> ignore;
+  draw_card deck |> ignore;
 
 
