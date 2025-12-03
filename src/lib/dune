@@ -36,7 +36,7 @@
 (library
  (name bot)
  (modules_without_implementation bot)
- (libraries core card player game)
+ (libraries core card player game round)
  (preprocess
  (pps ppx_jane)))
 

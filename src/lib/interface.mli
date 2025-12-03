@@ -15,7 +15,6 @@ type action =
   | Bet of int
   | Raise of int
 
-
 (*functions to print to the console*)
 
 (**
