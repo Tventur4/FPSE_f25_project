@@ -9,7 +9,6 @@ type t =
   { name : string
   ; player_id : int
   ; folded : bool
-  ; is_human : bool
   ; chip_stack : int
   ; hole_cards : (Card.t * Card.t) option
   } [@@deriving sexp]

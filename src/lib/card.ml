@@ -43,14 +43,13 @@ let card_to_int (card : t) : int =
 
 let int_to_suit (n : int) : suit =
   match n with
-  | 0 -> Clubs
   | 1 -> Diamonds
   | 2 -> Hearts
-  | 3 -> Spades 
+  | 3 -> Spades
+  | _ -> Clubs
 
 let int_to_rank (n : int) : rank =
   match n with
-  | 0 -> Two 
   | 1 -> Three
   | 2 -> Four
   | 3 -> Five
@@ -63,16 +62,10 @@ let int_to_rank (n : int) : rank =
   | 10 -> Queen
   | 11 -> King
   | 12 -> Ace
+  | _ -> Two 
 
 let int_to_card (n : int) : t = 
   { suit = int_to_suit(n / 13) ; rank = int_to_rank(n mod 13)}
-
-let suit_to_string (s : suit) : string =
-  match s with
-   | Clubs -> "Clubs"
-   | Diamonds -> "Diamonds"
-   | Hearts -> "Hearts"
-   | Spades -> "Spades"
 
 let to_string (card : t) : string =
   Sexp.to_string(sexp_of_rank(card.rank)) ^ Sexp.to_string(sexp_of_suit(card.suit))

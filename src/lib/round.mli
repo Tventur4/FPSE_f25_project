@@ -30,8 +30,10 @@ val apply_action :
   round_state -> Player.t -> action -> (round_state, string) result
 (** Applies a player's action and returns updated round state. *)
 
-val next_player : round_state -> Player.t option
-(** Returns the next player to act, or None if the round is over. *)
+
+(*table.mli takes care of this, not needed anymore??*)
+(* val next_player : round_state -> Player.t option
+* Returns the next player to act, or None if the round is over. *)
 
 val is_over : round_state -> bool
 (** Whether all players have acted and bets are equal or all but one folded. *)
