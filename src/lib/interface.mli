@@ -3,18 +3,6 @@
   command-line inputs from human players.
 *)
 
-(** 
-[action] is a variant type that represents a player's move. Will be split into [fold], [check], [call],
-[bet], and [raise]. these represents the different actions available for player. bet and int both take an int
-argument.
-*)
-type action =
-  | Fold
-  | Check
-  | Call
-  | Bet of int
-  | Raise of int
-
 (*functions to print to the console*)
 
 (**
@@ -50,15 +38,15 @@ val announce_winner : Player.t -> int -> unit
   the player for input, validates it against the legal moves, and 
   returns the corresponding [action] type. This function will loop until a valid move is entered.
 *)
-val prompt_for_action : Game.t -> action
+val prompt_for_action : Game.t -> Round.action
 
 (**
  [prompt_for_setup ()] asks the user for initial game parameters, such as 
  their name and the number of bot players. Initially we're going to test with 1 player and 1 bot.
  returns: [(player_name, num_bots)].
 *)
-val prompt_for_setup : unit -> (string * int)
 
+val prompt_for_setup : unit -> (string * int)
 (**
  [prompt_play_again ()] asks the user if they wish to play another hand and returns [true] or [false].
 *)

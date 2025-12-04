@@ -35,8 +35,15 @@ val current_round : t -> Round.betting_round
 (* advanceds to next game stage and deals appropraite cards ot the board*)
 val next_street : t -> t
 
-(* procceses a player's move and updates pot/table*)
-val apply_action : t -> Round.action -> (t, string) result
+(*advances from one round to another round. in here will be the entire logic of rounds
+preflop to flop to ... etc.
+a good portion of the entire logic shoudl be in here? hopefully broken down in sub functions idk
+*)
+val advance_round : Round.round_state -> Round.round_state
+
+(*not needed anymore because we have apply_action in round*)
+(* procceses a player's move and updates pot/table
+val apply_action : t -> Round.action -> (t, string) result *)
 
 (*Old functions from before game&table split*)
 
