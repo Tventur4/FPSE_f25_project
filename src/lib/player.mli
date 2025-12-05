@@ -5,6 +5,8 @@
 
 type hand = Card.t list [@@deriving sexp]
 
+type player_type = Human | Bot of Bot.t
+
 type t =
   { name : string
   ; player_id : int
