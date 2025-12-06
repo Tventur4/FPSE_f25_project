@@ -10,31 +10,14 @@ type player_type = Human | Bot of Bot.t
 type t =
   { name : string
   ; player_id : int
+  ; player_type : player_type
   ; folded : bool
   ; chip_stack : int
   ; hole_cards : (Card.t * Card.t) option
   } [@@deriving sexp]
 
-val make_player : string -> bool -> int -> t
-(** [make_player name human chips] is a new player with the specified attributes. *)
-
-val get_name : t -> string
-(** [get_name player] is the name of [player]. *)
-
-val get_player_id : t -> int
-(** [get_player_id] is the id of [player]. *)
-
-val has_folded  : t -> bool
-(** [has_folded player] is true if [player] has folded or cannot make any further bets, and otherwise false. *)
-
-val is_human : t -> bool
-(** [is_human player] is true if [player] is a human player, and false if it is a computer player. *)
-
-val get_chip_stack : t -> int
-(** [get_chip_stack player] is the chip stack of [player]. *)
-
-val get_hole_cards : t -> (Card.t * Card.t) option
-(** [get_hole_cards player] is a tuple containing the two hole cards belonging to [player]. *)
+val make_player : string -> int -> Bot.t option -> int -> t
+(** [make_player name id bot chips] is a new player with the specified attributes. *)
 
 val add_chips : t -> int -> t
 (** [add_chips player n] adds [n] chips to the chip stack of [player]. *)

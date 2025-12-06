@@ -1,3 +1,5 @@
+open Core
+
 type difficulty = Easy | Medium | Hard | Expert
 (** [difficulty] determines the relative difficulty of the bot. *)
 

@@ -14,14 +14,14 @@
 
 (library
  (name player)
- (modules_without_implementation player)
+ (modules player)
  (libraries core card bot)
  (preprocess
  (pps ppx_jane)))
 
 (library
  (name card_set)
- (modules_without_implementation card_set)
+ (modules card_set)
  (libraries core card)
  (preprocess
  (pps ppx_jane)))
