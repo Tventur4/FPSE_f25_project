@@ -5,7 +5,7 @@
 type difficulty = Easy | Medium | Hard | Expert
 (** [difficulty] determines the relative difficulty of the bot. *)
 
-type bot_type = All_in | Always_fold | Smart
+type bot_type = Always_fold | All_in | Rule_hand_only | Rule_best_hand | MCTS
 (** [bot_type] determines how a bot determines what action to perform. *)
 
 type t = 
