@@ -63,28 +63,28 @@ let evaluate (cards : Card.t ilst) : t =
 
   (*time to match with all possible hands*)
   match (flush, straight, groups) with
-  | (true, Some 12, _) -> {category = RoyalFlush; cards = sorted; kickers = []}
-  | (true, Some h, _) -> {category = StraightFlush; cards = sorted; kickers = [h]}
+  | (true, Some 12, _) -> {category = RoyalFlush; cards = sorted; tiebreakers = []}
+  | (true, Some h, _) -> {category = StraightFlush; cards = sorted; tiebreakers = [h]}
   (*if no Royal or Straight flush, analyze the remaning groups*)
   | (_, _, (4, r1) :: (1, r2) :: _) ->
-    {category = FourOfAKind; cards = sorted; kickers = [r1; r2]}
+    {category = FourOfAKind; cards = sorted; tiebreakers = [r1; r2]}
   | (_, _ , (3, r1) :: (2, r2) :: _) ->
-    {category = FullHouse; cards = sorted; kickers = [r1; r2]}
+    {category = FullHouse; cards = sorted; tiebreakers = [r1; r2]}
   | (true, None, _) ->
-    {category = Flush; cards = sorted; kcikers = List.map ~f:(fun c -> C.rank_to_int c.rank)}
+    {category = Flush; cards = sorted; tiebreakers = List.map ~f:(fun c -> C.rank_to_int c.rank)}
   | (false, Some h, _) ->
-    {category = Striaght; cards = sorted; kcikers = [h]}
+    {category = Striaght; cards = sorted; tiebreakers = [h]}
   | (_, _, (3, r1) :: rest) ->
-    {category = ThreeOfAKind; cards = sorted; kickers = r1 :: List.map rest ~f:snd}
+    {category = ThreeOfAKind; cards = sorted; tiebreakers = r1 :: List.map rest ~f:snd}
   | (_, _ (2, r1) :: rest) ->
-    {category = Pair; cards = sorted; kickers = r1 :: List.map rest ~f:snd}
+    {category = Pair; cards = sorted; tiebreakers = r1 :: List.map rest ~f:snd}
   | _ -> 
-    {category = HighCard; cards = sorted; kickers = List.map sorted ~f:(fun c -> C.rank_to_int c.rank)}
+    {category = HighCard; cards = sorted; tiebreakers = List.map sorted ~f:(fun c -> C.rank_to_int c.rank)}
 
 let compare (h1 : t) (h2 : t) : int = 
   let cat_comparison = compare_hand_category h1.category h2.category in
   cat_comparison <> 0 then cat_comparison (*if hand category is enough to determine winner of hands use that*)
-else List.compare Int.compare h1.kickers h2.kickers (*else use the kickers*)
+else List.compare Int.compare h1.tiebreakers h2.tiebreakers (*else use the tiebreakers*)
 
 let value_of_hand (hand : t) : int = 
   match hand.category with
