@@ -11,7 +11,7 @@ type t = Card.t list [@@deriving sexp]
 
   @return A standard deck.
 *)
-let get_deck () : t =
+let sorted_deck : t =
   let suits = [Card.Spades; Card.Hearts; Card.Diamonds; Card.Clubs] in
   let ranks =
     [ Card.Two; Card.Three; Card.Four; Card.Five; Card.Six; Card.Seven
@@ -60,11 +60,22 @@ let draw_card (deck : t) : Card.t =
   @throws failwith if there are less than [n] cards remaining in the deck.
 *)
 let draw_cards (deck : t) (n : int) : Card.t list =
+  if n < 0 then failwith "Cannot draw negative number of cards"
+  else
+    List.fold_until deck ~init:(0, []) ~f:(fun (count, acc) card ->
+      if count = n then Stop acc
+      else Continue (count + 1, card :: acc))
+    ~finish:(fun (count, acc) ->
+      if count < n then failwith "Not enough cards left in deck"
+      else List.rev acc)
+
+(* let draw_cards (deck : t) (n : int) : Card.t list =
   if List.length deck < n then
     failwith "Not enough cards left in deck"
   else
-    List.take deck n
+    List.take deck n *)
 
+    
 (*
   [burn_card deck] takes a card from the top of [deck] and discards it.
 

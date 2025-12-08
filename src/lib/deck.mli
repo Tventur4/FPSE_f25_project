@@ -9,8 +9,8 @@ type t (*= C.t list [@@deriving sexp] *)
 (** [t] is a serializable type to represent a deck of playing cards.
     Note that the "top" of the deck refers to the card at index 0. *)
 
-val get_deck : unit -> t
-(** [get_deck] is a standard deck of 52 playing cards sorted in ascending order by rank and then by suit. *)
+val sorted_deck : t
+(** [sorted_deck] is a standard deck of 52 playing cards sorted in ascending order by rank and then by suit. *)
 
 val shuffle : t -> t
 (** [shuffle deck] shuffles [deck], randomly rearranging the card. *)
