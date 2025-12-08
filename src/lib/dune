@@ -49,8 +49,8 @@
 
 (library
  (name table)
- (modules_without_implementation table)
- (libraries core player) ; Todo: add other dependencies
+ (modules table)
+ (libraries core player)
  (preprocess
  (pps ppx_jane)))
 
