@@ -89,6 +89,7 @@ let announce_winner (winner : Player.t) (amount : int) : unit =
   print_newline()
 
 (*end of Display functions*)
+
 (*start of Input Functions*)
 
 let prompt_for_setup () : (string * int) =
@@ -115,3 +116,29 @@ let prompt_for_setup () : (string * int) =
   (*return a tuple of name and num_bots*)
   (name, num_bots)
 
+
+let prompt_play_again () : bool =
+  print_string "Play another hand? ([y]es, [n]o)\n> ";
+  Out_channel.flush stdout;
+  match In_channel.input_line In_channel.stdin with
+  | Some s -> 
+    let lower = String.lowercase (String.strip s) in
+    String.equal lower "y" || String.equal lower "yes"
+  | None -> false
+
+let rec prompt_for_action (game : Game.t) : Round.action = 
+  let current_bet = game.current_round.current_bet in
+
+  if current_bet = 0 then
+    print_endline "Your action? (Options: [f]old, [c]heck, [b]et [amount])"
+  else
+    print_endline "Your action? (Options: [f]old, [c]all, [r]aise [amount])";
+
+  print_string "> ";
+  Out_channel.flush stdout;
+
+  match In_channel.input_line In_channel.stdin with
+  (*keep on recursing, if no input is given*)
+  | None -> prompt_for_action game
+  | Some input ->
+    let parts = String.split 
