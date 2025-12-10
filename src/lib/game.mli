@@ -6,7 +6,7 @@
 (* type betting_round = PreFlop | Flop | Turn | River | Showdown [@@deriving sexp] *)
 (** [betting_round] is a serializable type to represent the current betting round in a game of Texas Hold 'Em poker. *)
 
-(*UPDATED: t now contains state of a single hand of poker*)
+(* t contains state of a single hand of poker*)
 type t =
   { table : Table.t
   ; deck : Deck.t

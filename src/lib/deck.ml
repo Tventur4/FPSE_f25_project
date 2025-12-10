@@ -43,13 +43,14 @@ let num_cards (deck : t) : int =
   [draw_card deck] draw a single card from the top of [deck].
   
   @param deck The deck from which to draw a card.
-  @return The card at the "top".
+  @return The card at the "top" and the new deck with that card removed.
   @throws failwith if there are no cards left in [deck].
 *)
-let draw_card (deck : t) : Card.t =
+(*TODO: chec =k that this removes caards*)
+let draw_card (deck : t) : Card.t * t =
   match deck with
   | [] -> failwith "No cards left in deck"
-  | card :: _ -> card
+  | card :: _ -> (card, List.drop deck 1)
 
 (*
   [draw_cards deck n] draw [n] cards from the top of [deck]
@@ -59,15 +60,16 @@ let draw_card (deck : t) : Card.t =
   @return The first [n] cards drawn from the top.
   @throws failwith if there are less than [n] cards remaining in the deck.
 *)
-let draw_cards (deck : t) (n : int) : Card.t list =
+(*TODO: chec =k that this removes caards*)
+let draw_cards (deck : t) (n : int) : Card.t list * t =
   if n < 0 then failwith "Cannot draw negative number of cards"
   else
     List.fold_until deck ~init:(0, []) ~f:(fun (count, acc) card ->
-      if count = n then Stop acc
+      if count = n then Stop (acc, List.drop deck n)
       else Continue (count + 1, card :: acc))
     ~finish:(fun (count, acc) ->
       if count < n then failwith "Not enough cards left in deck"
-      else List.rev acc)
+      else (List.rev acc, List.drop deck n))
 
 (* let draw_cards (deck : t) (n : int) : Card.t list =
   if List.length deck < n then

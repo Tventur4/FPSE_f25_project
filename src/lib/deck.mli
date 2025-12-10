@@ -21,7 +21,7 @@ val num_cards : t -> int
 val draw_card : t -> Card.t * t
 (** [draw_card deck] draws a single card from the top of [deck]. *)
 
-val draw_cards : t -> int -> Card.t list 
+val draw_cards : t -> int -> (Card.t list) * t
 (** [draw_cards deck n] draw [n] cards from the top of [deck]. *)
 
 val burn_card : t -> t
