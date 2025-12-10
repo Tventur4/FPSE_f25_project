@@ -51,7 +51,7 @@ let init (players : Player.t list) : round_state =
 
 (* round is over if there's only one player left or the to_act list is empty*)
 let is_over (state: round_state) : bool = 
-  let active_count = (List.length state.contributions) + (List.length state.to_act) - (List.length state.folded) in
+  (* let active_count = (List.length state.contributions) + (List.length state.to_act) - (List.length state.folded) in *)
   match state.to_act with
   | [] -> true
   | _ -> false
@@ -111,7 +111,7 @@ let apply_action (state: round_state) (player : Player.t) (act : action) :
           to_act = remove_from_to_act state.to_act player
         }
     | Raise amount -> 
-      let total_wager = current_contrib + amount in
+      (* let total_wager = current_contrib + amount in *)
       let new_high_bet = state.current_bet + amount in
       let cost = new_high_bet - current_contrib in
 
