@@ -47,12 +47,12 @@ let get_straight_high_rank (cards : Card.t list) : int option =
   | [ 12; 3; 2; 1; 0] -> Some 3
   | _ -> None
 
-let is_flush (cards : C.t list) : bool = 
+let is_flush (cards : Card.t list) : bool = 
   match cards with
   | [] -> false
   | c :: rest -> List.for_all rest ~f:(fun x -> C.suit_to_int x.suit = C.suit_to_int c.suit)
 
-let evaluate (cards : Card.t lst) : t =
+let evaluate (cards : Card.t list) : t =
   (* edge case but shouldn't pop up*) 
   if List.length cards <> 5 then failwith "Hand Evaluation needs 5 cards";
 

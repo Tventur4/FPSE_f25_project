@@ -42,7 +42,7 @@
 
 (library
  (name interface)
- (modules_without_implementation interface)
+ (modules interface)
  (libraries core card player game)
  (preprocess
  (pps ppx_jane)))
