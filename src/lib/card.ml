@@ -1,6 +1,6 @@
 open Core
 
-type suit = Clubs | Diamonds | Hearts | Spades [@@deriving sexp, compare, equal]
+type suit = Clubs | Diamonds | Hearts | Spades [@@deriving sexp, compare, equal, variants, enumerate]
 (** [suit] is a comparable, serializable type to represent the suit attribute of a playing card. 
     Comparison is alphabetical on the string representation of the suit. *)
 
@@ -15,6 +15,7 @@ type t =
 (** [t] is a comparable, serializable type to represent a playing card.
       It is a record containing two fields of types suit and rank, respectively. *)
 
+(*TODO: this function can be derived with [@@deriving variants]*)
 let suit_to_int (s : suit) : int =
   match s with
    | Clubs -> 0
@@ -41,7 +42,8 @@ let rank_to_int (r : rank) : int =
 let card_to_int (card : t) : int =
   suit_to_int(card.suit) * 13 + rank_to_int(card.rank)
 
-let int_to_suit (n : int) : suit =
+(*TODO: You can use [@@deriving enumerate] from ppx_enumerate, then convert that list to an array and index the array. So most functionality in this module is derivable with ppx.*)
+  let int_to_suit (n : int) : suit =
   match n with
   | 1 -> Diamonds
   | 2 -> Hearts

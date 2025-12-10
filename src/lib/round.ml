@@ -18,13 +18,14 @@ type round_state = {
 } [@@deriving sexp]
 
 (* function to find how much a player has already contributed this round*)
-let get_contribution (state : round_state) (plyaer : Player.t) : int =
-  match List.ASsoc.find state.contributions player.player_id ~equal:Int.equal with
+(*TODO: Are you building? List.ASsoc is a typo. Also, why an association list instead of a map? I know that at a certain size, a list is faster than a tree map, but it's more idiomatic to use a map when performance is not a concern (and I don't think it's a concern here).*)
+let get_contribution (state : round_state) (player : Player.t) : int =
+  match List.Assoc.find state.contributions player.player_id ~equal:Int.equal with
   | Some amount -> amount
   | None -> 0
 
 (*update a player's contribution in the list*)
-let update_contribution (state : round_state) (player : Player.t) (added_amount : int)
+let update_contribution (state : round_state) (player : Player.t) (added_amount : int) =
   let current = get_contribution state player in
   let new_total = current + added_amount in
   List.Assoc.add state.contributions player.player_id new_total ~equal:Int.equal
@@ -61,7 +62,7 @@ let apply_action (state: round_state) (player : Player.t) (act : action) :
   | [] -> Error "No Players left to act. Round is over"
   (*sanity check to make sure a player isn't acting out of turn*)
   | next :: _ when next.player_id <> player.player_id -> 
-    Error (Printf.sprintf "It is not $s's turn" player.name)
+    Error (Printf.sprintf "It is not %s's turn" player.name)
   | _ -> 
     (*if the player is valid, calculate costs of the action (fold, check, call, bet, raise)*)
     let current_contrib = get_contribution state player in
@@ -91,7 +92,7 @@ let apply_action (state: round_state) (player : Player.t) (act : action) :
         Ok {
           state with
             pot = state.pot + amount_needed;
-            contributions = update_contribution state player amount_ndeeded;
+            contributions = update_contribution state player amount_needed;
             to_act = remove_from_to_act state.to_act player
         }
     | Bet amount ->
@@ -123,7 +124,7 @@ let apply_action (state: round_state) (player : Player.t) (act : action) :
           state with 
           current_bet = new_high_bet;
           pot = state.pot + cost;
-          contributions = update_contributions state player cost;
+          contributions = update_contribution state player cost;
           to_act = remove_from_to_act state.to_act player
         }
       

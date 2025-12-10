@@ -29,14 +29,14 @@
 (library
  (name game)
  (modules_without_implementation game)
- (libraries core card deck player table round)
+ (libraries core card deck table round)
  (preprocess
  (pps ppx_jane)))
 
 (library
  (name bot)
  (modules bot)
- (libraries core card player game round)
+ (libraries core card game round)
  (preprocess
  (pps ppx_jane)))
 
