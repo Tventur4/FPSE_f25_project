@@ -47,7 +47,7 @@ let next_street (game : t) : t =
   | Round.Showdown ->
     failwith "Game is already in Showdown round"
 
-(*advances from one round to another round. in here will be the entire logic of rounds
+(* advances from one round to another round. in here will be the entire logic of rounds
 preflop to flop to ... etc.*)
 let advance_round (game : t) : t =
   if Round.is_over game.current_round then
