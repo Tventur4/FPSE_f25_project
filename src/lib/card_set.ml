@@ -52,7 +52,7 @@ let is_flush (cards : C.t list) : bool =
   | [] -> false
   | c :: rest -> List.for_all rest ~f:(fun x -> C.suit_to_int x.suit = C.suit_to_int c.suit)
 
-let evaluate (cards : Card.t ilst) : t =
+let evaluate (cards : Card.t lst) : t =
   (* edge case but shouldn't pop up*) 
   if List.length cards <> 5 then failwith "Hand Evaluation needs 5 cards";
 
