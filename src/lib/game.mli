@@ -30,7 +30,7 @@ type t =
 val init_game : Table.t -> t
 (** [init_game players big_blind_value] creates and initializes a new game of poker. *)
 
-val current_round : t -> Round.betting_round
+val current_round : t -> Card.betting_round
 
 (* advanceds to next game stage and deals appropraite cards ot the board*)
 val next_street : t -> t

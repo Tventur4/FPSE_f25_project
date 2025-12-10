@@ -29,14 +29,14 @@
 (library
  (name game)
  (modules_without_implementation game)
- (libraries core card deck player table round)
+ (libraries core card deck table round)
  (preprocess
  (pps ppx_jane)))
 
 (library
  (name bot)
  (modules bot)
- (libraries core card card_set player game round)
+ (libraries core card card_set)
  (preprocess
  (pps ppx_jane)))
 
@@ -57,6 +57,6 @@
 (library
  (name round)
  (modules round)
- (libraries core player) ; Todo: add other dependencies
+ (libraries core card player) ; Todo: add other dependencies
  (preprocess
  (pps ppx_jane)))

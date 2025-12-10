@@ -38,7 +38,7 @@ val announce_winner : Player.t -> int -> unit
   the player for input, validates it against the legal moves, and 
   returns the corresponding [action] type. This function will loop until a valid move is entered.
 *)
-val prompt_for_action : Game.t -> Round.action
+val prompt_for_action : Game.t -> Card.action
 
 (**
  [prompt_for_setup ()] asks the user for initial game parameters, such as 

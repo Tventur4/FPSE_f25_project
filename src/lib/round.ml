@@ -3,13 +3,8 @@ open Core
 [@@@ocaml.warning "-27"]
 [@@@ocaml.warning "-32"]
 
-type action = Fold | Check | Call | Bet of int | Raise of int
-[@@deriving sexp]
-
-type betting_round = PreFlop | Flop | Turn | River | Showdown [@@deriving sexp]
-
 type round_state = {
-  stage : betting_round;
+  stage : Card.betting_round;
   pot : int;
   current_bet : int;
   to_act : Player.t list;
@@ -19,7 +14,7 @@ type round_state = {
 
 (* function to find how much a player has already contributed this round*)
 let get_contribution (state : round_state) (plyaer : Player.t) : int =
-  match List.ASsoc.find state.contributions player.player_id ~equal:Int.equal with
+  match List.Assoc.find state.contributions player.player_id ~equal:Int.equal with
   | Some amount -> amount
   | None -> 0
 

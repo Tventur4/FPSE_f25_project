@@ -10,7 +10,7 @@ type t =
   { diff : difficulty
   ; bot_type : bot_type}
 
-let make_move (bot : t) (game : Game.t) (hole_cards : Card.t * Card.t) (chips : int) : Round.action =
+let make_move (bot : t) (stage : Card.betting_round) (community_cards : Card.t list) (hole_cards : Card.t * Card.t) (chips : int) : Card.action =
   match bot.bot_type with
   | Always_fold -> Fold
   | All_in -> Bet of chips
@@ -18,12 +18,12 @@ let make_move (bot : t) (game : Game.t) (hole_cards : Card.t * Card.t) (chips : 
   | Rule_best_hand -> Fold (* unimplemented, decides move based off of the probability it has the best hand *)
   | Rule_MCTS -> Fold (* unimplemented, decides using Monte-Carlo Tree Search algorithm *)
 
-let rule_hand_only_move (game : Game.t) (cards : (Card.t * Card.t)) (chips : int) : Round.action =
-  match game.current_round.stage with
+let rule_hand_only_move (stage : Card.betting_round) (community_cards : Card.t list) (cards : (Card.t * Card.t)) (chips : int) : Card.action =
+  match stage with
   | Preflop -> rule_hand_only_move_preflop cards chips
-  | Flop -> rule_best_hand_move_flop game.community_cards cards chips
-  | Turn -> rule_best_hand_move_postflop game.community_cards cards (chips / 2)
-  | River -> rule_best_hand_move_postflop game.community_cards cards chips
+  | Flop -> rule_best_hand_move_flop community_cards cards chips
+  | Turn -> rule_best_hand_move_postflop community_cards cards (chips / 2)
+  | River -> rule_best_hand_move_postflop community_cards cards chips
   | _ -> Fold
 
 let rule_hand_only_move_preflop (cards : (Card.t * Card.t)) (chips : int) : Round.action =
@@ -52,7 +52,7 @@ let rule_hand_only_move_preflop (cards : (Card.t * Card.t)) (chips : int) : Roun
   else
     Fold
 
-let rule_best_hand_move_flop (community_cards : Card.t list) (cards : (Card.t * Card.t)) (chips : int) : Round.action =
+let rule_best_hand_move_flop (community_cards : Card.t list) (cards : (Card.t * Card.t)) (chips : int) : Card.action =
   let (c1, c_2) = cards in
   let card_set_hand = c2 :: (c1 :: community_cards) in
   let hand_value = Card_set.value_of_hand (Card_set.evaluate card_set_hand) in
@@ -87,7 +87,7 @@ let list_max (lst : 'a list) (default_val : 'a) : 'a =
   | [] -> default_val
   | hd :: tl -> List.fold_left max h t
 
-let rule_hand_only_move_postflop (community_cards : Card.t list) (cards : (Card.t * Card.t)) (chips : int) : Round.action =
+let rule_hand_only_move_postflop (community_cards : Card.t list) (cards : (Card.t * Card.t)) (chips : int) : Card.action =
   let (c1, c_2) = cards in
   let card_set_hand = c2 :: (c1 :: community_cards) in
   let possible_hands = choose_sublists 5 card_set_hand in
@@ -101,10 +101,10 @@ let rule_hand_only_move_postflop (community_cards : Card.t list) (cards : (Card.
     then Check
   else Fold
 
-let rule_best_hand_move (game : Game.t) (cards : (Card.t * Card.t)) (chips : int) : Round.action =
+let rule_best_hand_move (game : Game.t) (cards : (Card.t * Card.t)) (chips : int) : Card.action =
   Fold
 
-let monte_carlo_tree_search_move (game : Game.t) (cards : (Card.t * Card.t)) (chips : int) : Round.action =
+let monte_carlo_tree_search_move (game : Game.t) (cards : (Card.t * Card.t)) (chips : int) : Card.action =
   Fold
 
 
