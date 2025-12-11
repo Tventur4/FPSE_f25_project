@@ -12,7 +12,7 @@ type t =
   { diff : difficulty
   ; bot_type : bot_type}
 
-val make_move : t -> Game.t -> Card.t * Card.t -> int -> Card.action
+val make_move : t -> Card.betting_round -> Card.t list -> Card.t * Card.t -> int -> Card.action
 (** [make_move bot hole_cards chips] is an action the bot has determined to make given the hole cards and chips of the player. *)
 
 (** abstract out auxiliary functions for complicated bot types to their own .ml files. *)

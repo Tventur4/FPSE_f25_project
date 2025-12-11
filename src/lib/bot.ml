@@ -26,6 +26,8 @@ let rule_hand_only_move (stage : Card.betting_round) (community_cards : Card.t l
   | River -> rule_best_hand_move_postflop community_cards cards chips
   | _ -> Fold
 
+let rule_best_hand_move (stage : Card.betting_round)
+
 let rule_hand_only_move_preflop (cards : (Card.t * Card.t)) (chips : int) : Round.action =
   let (c1, c2) = cards in
   let r1 = c1.rank in
