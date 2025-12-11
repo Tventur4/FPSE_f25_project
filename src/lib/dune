@@ -28,11 +28,7 @@
 
 (library
  (name game)
-<<<<<<< HEAD
  (modules game)
-=======
- (modules_without_implementation game)
->>>>>>> 1df771e0bb91c259c5ededbd23892ef04b87960d
  (libraries core card deck table round)
  (preprocess
  (pps ppx_jane)))
@@ -40,23 +36,14 @@
 (library
  (name bot)
  (modules bot)
-<<<<<<< HEAD
- (libraries core card game round)
-=======
  (libraries core card card_set)
->>>>>>> 1df771e0bb91c259c5ededbd23892ef04b87960d
  (preprocess
  (pps ppx_jane)))
 
 (library
  (name interface)
-<<<<<<< HEAD
- (modules_without_implementation interface)
- (libraries core card player game round)
-=======
  (modules interface)
  (libraries core card player game)
->>>>>>> 1df771e0bb91c259c5ededbd23892ef04b87960d
  (preprocess
  (pps ppx_jane)))
 
@@ -70,10 +57,6 @@
 (library
  (name round)
  (modules round)
-<<<<<<< HEAD
- (libraries core player) 
-=======
  (libraries core card player) ; Todo: add other dependencies
->>>>>>> 1df771e0bb91c259c5ededbd23892ef04b87960d
  (preprocess
  (pps ppx_jane)))
