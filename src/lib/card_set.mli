@@ -7,7 +7,7 @@ type t [@@deriving sexp]
 
 (* returns best possible 5-card hand constructed from 7 available hands. takes two hole cards and
 community cards as parameters*)
-val of_7_cards : Card.t -> Card.t -> Card.t list -> t
+val of_7_cards : Card.t list -> t
 
 (* return comparable integer score used to rank hands*)
 val value_of_hand : t -> int

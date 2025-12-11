@@ -10,7 +10,7 @@ type t =
   { diff : difficulty
   ; bot_type : bot_type}
 
-let make_move (bot : t) (stage : Card.betting_round) (community_cards : Card.t list) (hole_cards : Card.t * Card.t) (chips : int) : Card.action =
+let make_move (bot : t) (stage : Card.betting_round) (community_cards : Card.t list) (num_players : int) (hole_cards : Card.t * Card.t) (chips : int) : Card.action =
   match bot.bot_type with
   | Always_fold -> Fold
   | All_in -> Bet of chips
@@ -25,8 +25,6 @@ let rule_hand_only_move (stage : Card.betting_round) (community_cards : Card.t l
   | Turn -> rule_best_hand_move_postflop community_cards cards (chips / 2)
   | River -> rule_best_hand_move_postflop community_cards cards chips
   | _ -> Fold
-
-let rule_best_hand_move (stage : Card.betting_round)
 
 let rule_hand_only_move_preflop (cards : (Card.t * Card.t)) (chips : int) : Round.action =
   let (c1, c2) = cards in
@@ -103,8 +101,79 @@ let rule_hand_only_move_postflop (community_cards : Card.t list) (cards : (Card.
     then Check
   else Fold
 
-let rule_best_hand_move (game : Game.t) (cards : (Card.t * Card.t)) (chips : int) : Card.action =
-  Fold
+let shuffle (list : 'a list) : 'a list =
+  List.permute list
+
+let rec take (n : int) = function
+  | [] -> []
+  | hd :: tl -> if n = 0 then [] else hd :: take (n - 1) tl
+
+let rec drop (n : int) = function
+  | [] -> []
+  | hd :: tl -> if n = 0 then tl else drop (n - 1) tl
+
+let rec deal_opponents n deck acc =
+  match n, deck with
+  | 0, -> (List.rev acc, deck)
+  | _, c1 :: c2 :: rest -> deal_opponents (n - 1) rest ((c1, c2) :: acc)
+  | _, _ -> (List.rev acc, deck)
+
+let rec monte_carlo_simulate (k : int) (community_cards : Card.t list) (num_players : int) (hole_cards : (Card.t * Card.t)) (deck : Card.t list) (wins : int) (ties : int) : int * int =
+  if k = 0 then (wins, ties)
+  else
+    let shuffled = shuffle deck in
+    let missing = max 0 (5 - List.length community_cards) in
+    let new_board = take missing shuffled in
+    let rest = drop missing shuffled in
+    
+    let full_board = community_cards @ new_board in
+
+    let num_opponents = num_players - 1 in
+
+    let opp_holes, rest2 = deal_opponents num_opponents rest [] in
+
+    let (h1, h2) = hole_cards in
+    let hero_hand = Card_set.of_7_cards (h1 :: h2 :: full_board) in
+
+    let opp_best =
+      match opp_holes with
+      | [] -> None
+      | _ ->
+        let scores =
+          List.map
+            (fun (a, b) -> Card_set.of_7_cards (a :: b :: full_board))
+            opp_holes
+        in
+        Some (List.fold_left
+          (fun best x ->
+            if Card_set.compare x best > 0 then x else best)
+            (List.hd scores) (List.tl scores))
+    in
+
+    let wins', ties' =
+      match opp_best with
+      | None -> (wins + 1, ties)
+      | Some b ->
+        let cmp = Card_set.compare hero_hand b in
+        if cmp > 0 then (wins + 1, ties)
+        else if cmp = 0 then (wins, ties + 1)
+        else (wins, ties)
+    in
+
+    monte_carlo_simulate (k - 1) board num_players hole_cards deck wins' ties'
+
+let estimate_win_probability (community_cards : Card.t list) (num_players : int) (hole_cards : (Card.t * Card.t)) (num_samples : int) : float =
+  let (h1, h2) = hole_cards in
+  let used = h1 :: h2 :: community_cards in
+  let deck = List.filter (fun c -> not (List.mem c used)) Deck.sorted_deck in
+  let wins, ties = monte_carlo_simulate num_samples community_cards num_players hole_cards deck 0 0 in
+  (float wins +. 0.5 *. float ties) /. float num_samples
+
+let rule_best_hand_move (community_cards : Card.t list) (num_players : int) (cards : (Card.t * Card.t)) (chips : int) : Card.action =
+  let p = estimate_win_probability community_cards num_players hole_cards 300 in
+  if p < 0.3 then Fold 
+  else if p < 0.6 then Call
+  else Bet (chips / 10)
 
 let monte_carlo_tree_search_move (game : Game.t) (cards : (Card.t * Card.t)) (chips : int) : Card.action =
   Fold
