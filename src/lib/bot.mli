@@ -13,7 +13,7 @@ type t =
   ; bot_type : bot_type}
 
 val make_move : t -> Card.betting_round -> Card.t list -> int -> Card.t * Card.t -> int -> Card.action
-(** [make_move bot hole_cards chips] is an action the bot has determined to make given the hole cards and chips of the player. *)
+(** [make_move bot stage community_cards num_players hole_cards chips] is an action the bot has determined to make given the hole cards and chips of the player. *)
 
 (** abstract out auxiliary functions for complicated bot types to their own .ml files. *)
 

@@ -13,18 +13,10 @@ type t =
 let make_move (bot : t) (stage : Card.betting_round) (community_cards : Card.t list) (num_players : int) (hole_cards : Card.t * Card.t) (chips : int) : Card.action =
   match bot.bot_type with
   | Always_fold -> Fold
-  | All_in -> Bet of chips
-  | Rule_hand_only -> rule_hand_only_move hole_cards chips (* unimplemented, decides move based off of its hand only *)
-  | Rule_best_hand -> Fold (* unimplemented, decides move based off of the probability it has the best hand *)
+  | All_in -> Bet chips
+  | Rule_hand_only -> rule_hand_only_move stage community_cards hole_cards chips (*cdecides move based off of its hand only *)
+  | Rule_best_hand -> rule_best_hand_move stage community_cards num_players hole_cards chips (* unimplemented, decides move based off of the probability it has the best hand *)
   | Rule_MCTS -> Fold (* unimplemented, decides using Monte-Carlo Tree Search algorithm *)
-
-let rule_hand_only_move (stage : Card.betting_round) (community_cards : Card.t list) (cards : (Card.t * Card.t)) (chips : int) : Card.action =
-  match stage with
-  | Preflop -> rule_hand_only_move_preflop cards chips
-  | Flop -> rule_best_hand_move_flop community_cards cards chips
-  | Turn -> rule_best_hand_move_postflop community_cards cards (chips / 2)
-  | River -> rule_best_hand_move_postflop community_cards cards chips
-  | _ -> Fold
 
 let rule_hand_only_move_preflop (cards : (Card.t * Card.t)) (chips : int) : Round.action =
   let (c1, c2) = cards in
@@ -52,7 +44,7 @@ let rule_hand_only_move_preflop (cards : (Card.t * Card.t)) (chips : int) : Roun
   else
     Fold
 
-let rule_best_hand_move_flop (community_cards : Card.t list) (cards : (Card.t * Card.t)) (chips : int) : Card.action =
+let rule_hand_only_move_flop (community_cards : Card.t list) (cards : (Card.t * Card.t)) (chips : int) : Card.action =
   let (c1, c_2) = cards in
   let card_set_hand = c2 :: (c1 :: community_cards) in
   let hand_value = Card_set.value_of_hand (Card_set.evaluate card_set_hand) in
@@ -79,8 +71,8 @@ let rule_hand_only_move_postflop (community_cards : Card.t list) (cards : (Card.
   let hand_values = List.map ~f:(function ls -> Card_set.value_of_hand (Card_set.evaluate ls)) possible_hands in
   let hand_value = list_max hand_values 0 in
   if (hand_value > 3)
-    then bet (chips / 10)
-  else if (hand value == 3)
+    then Bet (chips / 5)
+  else if (hand_value == 3)
     then Call
   else if (hand_value > 1)
     then Check
@@ -154,11 +146,33 @@ let estimate_win_probability (community_cards : Card.t list) (num_players : int)
   let wins, ties = monte_carlo_simulate num_samples community_cards num_players hole_cards deck 0 0 in
   (float wins +. 0.5 *. float ties) /. float num_samples
 
-let rule_best_hand_move (community_cards : Card.t list) (num_players : int) (cards : (Card.t * Card.t)) (chips : int) : Card.action =
+let rule_hand_only_move (stage : Card.betting_round) (community_cards : Card.t list) (cards : (Card.t * Card.t)) (chips : int) : Card.action =
+  match stage with
+  | Preflop -> rule_hand_only_move_preflop cards chips
+  | Flop -> rule_hand_only_move_flop community_cards cards chips
+  | Turn -> rule_hand_only_move_postflop community_cards cards (chips / 2)
+  | River -> rule_hand_only_move_postflop community_cards cards chips
+  | _ -> Fold
+
+let rule_best_hand_move (stage : Card.betting_round) (community_cards : Card.t list) (num_players : int) (cards : (Card.t * Card.t)) (chips : int) : Card.action =
   let p = estimate_win_probability community_cards num_players hole_cards 300 in
-  if p < 0.3 then Fold 
-  else if p < 0.6 then Call
-  else Bet (chips / 10)
+  match stage with
+  | Preflop ->
+    if p < 0.4 then Fold
+    else if p < 0.6 then Call
+    else Bet (chips / 10)
+  | Flop ->
+    if p < 0.35 then Fold
+    else f p < 0.55 then Call
+    else Bet (chips / 10)
+  | Turn ->
+    if p < 0.3 then Fold
+    else if p < 0.55 then Call
+    else Bet (chips / 10)
+  | River ->
+    if p < 0.5 then Fold
+    else Bet (chips / 5)
+  | _ -> Fold
 
 let monte_carlo_tree_search_move (game : Game.t) (cards : (Card.t * Card.t)) (chips : int) : Card.action =
   Fold
