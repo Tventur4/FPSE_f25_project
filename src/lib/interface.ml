@@ -8,7 +8,7 @@ let clear_screen () =
 
 (*Display functions*)
 
-let display_game_state (game : Game.t) : Unit = 
+let display_game_state (game : Game.t) : unit = 
   clear_screen ();
 
   (* print headers for each new stage declaration*)
@@ -18,7 +18,7 @@ let display_game_state (game : Game.t) : Unit =
     |> String.uppercase
 
   in
-  print_endline "--- %s ---\n" stage_name;
+  printf "--- %s ---\n" stage_name;
   
   (*If the current round isn't in the preflop,
   iterate through the list and display all the community cards*)
@@ -33,7 +33,8 @@ let display_game_state (game : Game.t) : Unit =
   
 let display_player_view (game: Game.t) : unit =
   (*find human player in table of players to display*)
-  let human = List.find game.table.players ~f:(fun p ->
+  (* TODO active players or all players?*)
+  let human = List.find (Table.current_players game.table) ~f:(fun p ->
     match p.player_type with | Player.Human -> true | _ -> false)
   in
   match human with
@@ -53,8 +54,8 @@ let display_player_view (game: Game.t) : unit =
       (
         print_string "Board: [";
         List.iter game.community_cards ~f:(fun c -> printf "%s " (Card.to_string c));
-        print_endline;
-      )
+        print_endline "]"
+      );
     
     printf "Your Chips: $%d\n" h.chip_stack;
 
@@ -78,15 +79,12 @@ let display_showdown (game : Game.t) (results : (Player.t * string) list) : unit
     in
     printf "%s shows: %s (Hand: %s)\n" p.name cards_str hand_desc
     );
-    print_newline ()
 
 (*given a winner and an amount (calculated from the pot) output the winner and the amount they've won*)
 let announce_winner (winner : Player.t) (amount : int) : unit =
   printf "%s wins $%d.\n" winner.name amount;
-  print_newline ();
   print_endline "[Chip Counts]";
   printf "%s: $%d\n" winner.name (winner.chip_stack + amount);
-  print_newline()
 
 (*end of Display functions*)
 
@@ -141,4 +139,4 @@ let rec prompt_for_action (game : Game.t) : Round.action =
   (*keep on recursing, if no input is given*)
   | None -> prompt_for_action game
   | Some input ->
-    let parts = String.split 
+    let parts = String.split
