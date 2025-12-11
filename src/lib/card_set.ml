@@ -93,22 +93,24 @@ let rec choose_sublists (k : int) (list : 'a list) : 'a list list =
   | _, [] -> []
   | k, hd :: tl ->
     let with_hd =
-      List.map (fun tl' -> hd :: tl') (choose_sublists (k - 1) tl)
+      List.map ~f:(fun tl' -> hd :: tl') (choose_sublists (k - 1) tl)
     in
     let without_hd = choose_sublists k tl in
     with_hd @ without_hd
+
+let handle_option (o : 'a option) =
+  match o with
+  | Some v -> v
+  | None -> failwith "value not found"
 
 let of_7_cards (seven_cards : Card.t list) : t =
   match seven_cards with
   | [c1; c2; c3; c4; c5; c6; c7] ->
     let fives = choose_sublists 5 seven_cards in
     let evaluated =
-      List.map evaluate fives
+      List.map ~f:evaluate fives
     in
-    List.fold_left 
-      (fun best h -> if compare h best > 0 then h else best)
-      (List.hd evaluated)
-      (List.tl evaluated)
+    List.fold ~f:(fun best h -> if compare h best > 0 then h else best) ~init:(handle_option (List.hd evaluated)) (handle_option (List.tl evaluated))
   | _ ->
     invalid_arg "of_7_cards requires exactly 7 cards"
 
