@@ -102,10 +102,10 @@ let of_7_cards (seven_cards : Card.t list) : t =
   | [c1; c2; c3; c4; c5; c6; c7] ->
     let fives = choose_sublists 5 seven_cards in
     let evaluated =
-      List.map value_of_hand fives
+      List.map evaluate fives
     in
     List.fold_left 
-      (fun best -> if compare h best > 0 then h else best)
+      (fun best h -> if compare h best > 0 then h else best)
       (List.hd evaluated)
       (List.tl evaluated)
   | _ ->
