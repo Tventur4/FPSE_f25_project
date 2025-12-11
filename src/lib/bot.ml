@@ -16,7 +16,7 @@ let make_move (bot : t) (stage : Card.betting_round) (community_cards : Card.t l
   | All_in -> Bet chips
   | Rule_hand_only -> rule_hand_only_move stage community_cards hole_cards chips (*cdecides move based off of its hand only *)
   | Rule_best_hand -> rule_best_hand_move stage community_cards num_players hole_cards chips (* unimplemented, decides move based off of the probability it has the best hand *)
-  | Rule_MCTS -> Fold (* unimplemented, decides using Monte-Carlo Tree Search algorithm *)
+  | MCTS -> Fold (* unimplemented, decides using Monte-Carlo Tree Search algorithm *)
 
 let rule_hand_only_move_preflop (cards : (Card.t * Card.t)) (chips : int) : Round.action =
   let (c1, c2) = cards in
@@ -45,7 +45,7 @@ let rule_hand_only_move_preflop (cards : (Card.t * Card.t)) (chips : int) : Roun
     Fold
 
 let rule_hand_only_move_flop (community_cards : Card.t list) (cards : (Card.t * Card.t)) (chips : int) : Card.action =
-  let (c1, c_2) = cards in
+  let (c1, c2) = cards in
   let card_set_hand = c2 :: (c1 :: community_cards) in
   let hand_value = Card_set.value_of_hand (Card_set.evaluate card_set_hand) in
   if (hand_value > 3) 
@@ -62,13 +62,13 @@ let rule_hand_only_move_flop (community_cards : Card.t list) (cards : (Card.t * 
 let list_max (lst : 'a list) (default_val : 'a) : 'a =
   match lst with
   | [] -> default_val
-  | hd :: tl -> List.fold_left max h t
+  | hd :: tl -> List.fold_left max hd tl
 
 let rule_hand_only_move_postflop (community_cards : Card.t list) (cards : (Card.t * Card.t)) (chips : int) : Card.action =
-  let (c1, c_2) = cards in
+  let (c1, c2) = cards in
   let card_set_hand = c2 :: (c1 :: community_cards) in
   let possible_hands = Card_set.choose_sublists 5 card_set_hand in
-  let hand_values = List.map ~f:(function ls -> Card_set.value_of_hand (Card_set.evaluate ls)) possible_hands in
+  let hand_values = List.map (function ls -> Card_set.value_of_hand (Card_set.evaluate ls)) possible_hands in
   let hand_value = list_max hand_values 0 in
   if (hand_value > 3)
     then Bet (chips / 5)
@@ -91,7 +91,7 @@ let rec drop (n : int) = function
 
 let rec deal_opponents n deck acc =
   match n, deck with
-  | 0, -> (List.rev acc, deck)
+  | 0, _ -> (List.rev acc, deck)
   | _, c1 :: c2 :: rest -> deal_opponents (n - 1) rest ((c1, c2) :: acc)
   | _, _ -> (List.rev acc, deck)
 
@@ -148,22 +148,22 @@ let estimate_win_probability (community_cards : Card.t list) (num_players : int)
 
 let rule_hand_only_move (stage : Card.betting_round) (community_cards : Card.t list) (cards : (Card.t * Card.t)) (chips : int) : Card.action =
   match stage with
-  | Preflop -> rule_hand_only_move_preflop cards chips
+  | PreFlop -> rule_hand_only_move_preflop cards chips
   | Flop -> rule_hand_only_move_flop community_cards cards chips
   | Turn -> rule_hand_only_move_postflop community_cards cards (chips / 2)
   | River -> rule_hand_only_move_postflop community_cards cards chips
   | _ -> Fold
 
 let rule_best_hand_move (stage : Card.betting_round) (community_cards : Card.t list) (num_players : int) (cards : (Card.t * Card.t)) (chips : int) : Card.action =
-  let p = estimate_win_probability community_cards num_players hole_cards 300 in
+  let p = estimate_win_probability community_cards num_players cards 300 in
   match stage with
-  | Preflop ->
+  | PreFlop ->
     if p < 0.4 then Fold
     else if p < 0.6 then Call
     else Bet (chips / 10)
   | Flop ->
     if p < 0.35 then Fold
-    else f p < 0.55 then Call
+    else if p < 0.55 then Call
     else Bet (chips / 10)
   | Turn ->
     if p < 0.3 then Fold
@@ -173,9 +173,6 @@ let rule_best_hand_move (stage : Card.betting_round) (community_cards : Card.t l
     if p < 0.5 then Fold
     else Bet (chips / 5)
   | _ -> Fold
-
-let monte_carlo_tree_search_move (game : Game.t) (cards : (Card.t * Card.t)) (chips : int) : Card.action =
-  Fold
 
 
 
