@@ -3,13 +3,8 @@ open Core
 [@@@ocaml.warning "-27"]
 [@@@ocaml.warning "-32"]
 
-type action = Fold | Check | Call | Bet of int | Raise of int
-[@@deriving sexp]
-
-type betting_round = PreFlop | Flop | Turn | River | Showdown [@@deriving sexp]
-
 type round_state = {
-  stage : betting_round;
+  stage : Card.betting_round;
   pot : int;
   current_bet : int;
   to_act : Player.t list;
