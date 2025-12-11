@@ -84,7 +84,8 @@ let draw_cards (deck : t) (n : int) : Card.t list * t =
   @param deck The deck from which to burn a card.
   @throws failwith if there are no cards left in [deck].
 *)
-let burn_card (deck : t) : unit =
-  draw_card deck |> ignore;
+let burn_card (deck : t) : t =
+  let new_deck = snd (draw_card deck) in
+  new_deck
 
 
