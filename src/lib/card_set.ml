@@ -86,6 +86,31 @@ let compare (h1 : t) (h2 : t) : int =
   cat_comparison <> 0 then cat_comparison (*if hand category is enough to determine winner of hands use that*)
 else List.compare Int.compare h1.tiebreakers h2.tiebreakers (*else use the tiebreakers*)
 
+let rec choose_sublists (k : int) (list : 'a list) : 'a list list =
+  match k, list with
+  | 0, _ -> [ [] ]
+  | _, [] -> []
+  | k, hd :: tl ->
+    let with_hd =
+      List.map (fun tl' -> hd :: tl') (choose_sublists (k - 1) tl)
+    in
+    let without_hd = choose_sublists k tl in
+    with_hd @ without_hd
+
+let of_7_cards (seven_cards : Card.t list) : t =
+  match seven_cards with
+  | [c1; c2; c3; c4; c5; c6; c7] ->
+    let fives = choose_sublists 5 seven_cards in
+    let evaluated =
+      List.map value_of_hand fives
+    in
+    List.fold_left 
+      (fun best -> if compare h best > 0 then h else best)
+      (List.hd evaluated)
+      (List.tl evaluated)
+  | _ ->
+    invalid_arg "of_7_cards requires exactly 7 cards"
+
 let value_of_hand (hand : t) : int = 
   match hand.category with
   | HandCard -> 0

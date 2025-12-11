@@ -67,21 +67,6 @@ let rule_best_hand_move_flop (community_cards : Card.t list) (cards : (Card.t * 
     Check
   else Fold
 
-let rec choose_sublists (k : int) (l : 'a list) : 'a list list =
-  if k = 0 then [ [] ]
-  else 
-    let len = List.length l in
-    if len < k then []
-    else if k = len
-      then [ l ]
-    else match l with
-    | h :: t -> let starting_with_h =
-      (List.map (fun sublist -> h :: sublist) (choose_sublists (pred k) t))
-      in
-      let not_starting_with_h = choose k t in
-      starting_with_h @ not_starting_with_h
-    | [] -> assert false
-
 let list_max (lst : 'a list) (default_val : 'a) : 'a =
   match lst with
   | [] -> default_val
@@ -90,7 +75,7 @@ let list_max (lst : 'a list) (default_val : 'a) : 'a =
 let rule_hand_only_move_postflop (community_cards : Card.t list) (cards : (Card.t * Card.t)) (chips : int) : Card.action =
   let (c1, c_2) = cards in
   let card_set_hand = c2 :: (c1 :: community_cards) in
-  let possible_hands = choose_sublists 5 card_set_hand in
+  let possible_hands = Card_set.choose_sublists 5 card_set_hand in
   let hand_values = List.map ~f:(function ls -> Card_set.value_of_hand (Card_set.evaluate ls)) possible_hands in
   let hand_value = list_max hand_values 0 in
   if (hand_value > 3)
