@@ -142,7 +142,7 @@ let rec prompt_for_action (game : Game.t) : Card.action =
     (* different actions a player can make*)
     | ["f"] | ["fold"] -> Card.Fold
     | ["c"] | ["check"] | ["call"] ->
-      if current_bet = 0 then Round.Check else Card.Call
+      if current_bet = 0 then Card.Check else Card.Call
     | cmd :: args :: _ ->
       let is_bet = List.mem ["b"; "bet"] cmd ~equal:String.equal in
       let is_raise = List.mem ["r"; "raise"] cmd ~equal:String.equal in
@@ -153,8 +153,8 @@ let rec prompt_for_action (game : Game.t) : Card.action =
           else Option.value (int_of_string_opt args) ~default:0
         in
         if amount <= 0 then (print_endline "Invalid amount."; prompt_for_action game)
-        else if is_bet then Round.Bet amount
-        else Round.Raise amount
+        else if is_bet then Card.Bet amount
+        else Card.Raise amount
       else
         (print_endline "Invalid command."; prompt_for_action game)
       
