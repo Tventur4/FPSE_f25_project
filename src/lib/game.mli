@@ -35,6 +35,9 @@ val current_round : t -> Card.betting_round
 (* advanceds to next game stage and deals appropraite cards ot the board*)
 val next_street : t -> t
 
+val process_turn : t -> Card.action -> (t, string) result
+
+val check_winner_by_fold : t -> Player.t option
 (*advances from one round to another round. in here will be the entire logic of rounds
 preflop to flop to ... etc.
 a good portion of the entire logic shoudl be in here? hopefully broken down in sub functions idk

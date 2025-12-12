@@ -1,6 +1,11 @@
 open Core
 
-let rec betting_loop (game : Game.t) : Game.t = 
+(* needs to be reworked and refactored.
+taking some code from here and dispersing it through
+several recursive functions that are going to call each other
+and drive the game loop forward
+*)
+(* let rec betting_loop (game : Game.t) : Game.t = 
   let round_state = game.current_round in
 
   if Round.is_over round_state then
@@ -45,51 +50,105 @@ let rec betting_loop (game : Game.t) : Game.t =
         print_endline (Printf.sprintf "\n %s performs %s\n" player.name action_str);
 
         betting_loop new_game
-     
+   *)
 
 let rec game_loop (game : Game.t) : unit =
-  match Game.current_round game with
-  | Card.Showdown ->
-    let active_players = Table.get_active_players game.table in
+  (*display game state and display the player view*)
+  Interface.display_game_state game;
+  Interface.display_player_view game;
 
-    (*map all the players and find out their best hand rank with Card_set.of_7_cards*)
-    let results = List.map active_players ~f:(fun p -> 
-      let hole1, hole2 = Option.value_exn p.hole_cards in
-      (*combine hole cards and community cards to feed into best hand of 5 that can be made*)
-      let best_hand = Card_set.of_7_cards (hole1 :: hole2 :: game.community_cards) in
-      (p, best_hand)
-      ) in
-    
-    let sorted_results = List.sort results ~compare:(fun (_, h1) (_, h2) ->
-      Card_set.compare h2 h1
-    ) in
+  if Round.is_over game.current_round then
+    match game.current_round.stage with
+    (*if the current stage is the showdown then call showdown function
+      and determine winner.
+      *)
+    | Card.Showdown ->
+      handle_showdown game
+    | _ -> 
+      (*otherwise move onto the next street PreFlop -> Flop ...*)
+      let next_game = Game.next_street game in
+      game_loop next_game
+    else
+      let current_player = Table.get_player_at_turn game.table in
 
-    (*display the results to the console*)
-    Interface.display_showdown game (List.map sorted_results ~f:(fun (p, h) -> 
-      (p, Card_set.to_string h)));
-    
-    let winner, _ = List.hd_exn sorted_results in
-    Interface.announce_winner winner game.pot;
+      let action = 
+        match current_player.player_type with
+        | Player.Human ->
+          Interface.prompt_for_action game
+        | Player.Bot bot_data -> 
+          print_endline (Printf.sprintf "%s is thinking... " current_player.name);
+          (* Unix.sleep 1;  *)
+          (* helps for realism, otherwise commands move too fast on the screen*)
+          (*obtain data needed for the bot to make a move*)
+          let stage = game.current_round.stage in
+          let current_bet = game.current_round.current_bet in
+          let community_cards = game.community_cards in
+          let num_players = List.length (Table.get_active_players game.table) in
+          let hole = Option.value_exn current_player.hole_cards in
+          let chips = current_player.chip_stack in
+          Bot.make_move bot_data stage current_bet community_cards num_players hole chips
+      in
 
-    (* ask if player wants to play again*)
+    (*let game engine take over and process the turn*)
+    match Game.process_turn game action with
+    | Error msg ->
+      print_endline (Printf.sprintf "\nERROR: %s\n" msg);
+      game_loop game (* start game loop over game and see if it works*)
+    | Ok game_post_action ->
+      let action_str = Sexp.to_string (Card.sexp_of_action action) in
+      print_endline (Printf.sprintf "\n%s performs %s\n" current_player.name action_str);
+      begin
+      (*check if everyone else has folded, and if so determine winner EARLY*)
+      match Game.check_winner_by_fold game_post_action with
+      | Some winner ->
+        handle_winner winner game_post_action.pot game_post_action
+      | None ->
+        (*other wise keep on going with the game loop*)
+        game_loop game_post_action
+      end
+and handle_showdown (game : Game.t) = 
+  let active_players = Table.get_active_players game.table in
+
+  (*find best hands for each of the active players*)
+  let results = List.map active_players ~f:(fun p ->
+    let hole1, hole2 = Option.value_exn p.hole_cards in
+    let all_cards = [hole1; hole2] @ game.community_cards in
+    let best_hand = Card_set.of_7_cards all_cards in
+    (p, best_hand)
+  ) in
+
+  let sorted_results = List.sort results ~compare:(fun (_, h1) (_, h2) ->
+    Card_set.compare h2 h1
+  ) in
+
+  (*display the reuslts to the console through interface*)
+  Interface.display_showdown game (List.map sorted_results ~f:(fun (p, h) ->
+    (p, Card_set.to_string h)));
+
+  (*extract the winner by taking the player with the strongest hand
+  strength*)
+  let winner, _ = List.hd_exn sorted_results in
+  handle_winner winner game.pot game
+
+  and handle_winner (winner : Player.t) (pot : Chips.t) (game : Game.t) = 
+    Interface.announce_winner winner pot;
+
     if Interface.prompt_play_again () then
-      let winner_updated = Player.add_chips winner game.pot in
+      (* add chips to the winner*)
+      let winner_updated = Player.add_chips winner pot in
 
-      (*create new player list with the updated winner*)
+      (*update the table and replace old winner with new winner*)
       let current_players = Table.current_players game.table in
+      
       let next_players = List.map current_players ~f:(fun p ->
-        if p.player_id = winner.player_id then winner_updated else p 
+        if p.player_id = winner.player_id then winner_updated else p
       ) in
+
       let new_table = Table.init next_players in
       let new_game = Game.init_game new_table in
       game_loop new_game
-    else
-      print_endline "Thanks for playing Ocaml Hold 'Em"
-
-  | _ ->
-    let game_after_betting = betting_loop game in
-    let next_game = Game.next_street game_after_betting in
-    game_loop next_game
+      else 
+        print_endline "Thanks for Playing OCaml Hold 'Em!"
 
 let () =
   let (player_name, num_bots, bot_diff) = Interface.prompt_for_setup () in
