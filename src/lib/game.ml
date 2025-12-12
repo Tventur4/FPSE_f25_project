@@ -28,8 +28,8 @@ let init_game (table : Table.t) : t =
     in
   let table_with_cards = Table.init players_with_cards in
   let round_state = Round.init table in
-  { table
-  ; deck
+  { table = table_with_cards
+  ; deck = deck_after_deal
   ; community_cards = []
   ; pot = round_state.pot
   ; current_round = round_state
