@@ -1,0 +1,17 @@
+(test
+ (name tests)
+ (modules tests)
+ (libraries
+  ounit2
+  core
+  bot_best_hand
+  bot_hand_only
+  bot
+  card_set
+  card
+  deck
+  game
+  interface
+  player
+  round
+  table))
