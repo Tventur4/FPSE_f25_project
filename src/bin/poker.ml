@@ -45,7 +45,8 @@ let rec betting_loop (game : Game.t) : Game.t =
         print_endline (Printf.sprintf "\n %s performs %s\n" player.name action_str);
 
         betting_loop new_game
-      
+     
+
 let rec game_loop (game : Game.t) : unit =
   match Game.current_round game with
   | Card.Showdown ->
