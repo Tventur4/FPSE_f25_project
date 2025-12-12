@@ -62,6 +62,13 @@
  (pps ppx_jane)))
 
 (library
+ (name interface)
+ (modules interface)
+ (libraries core card player round game)
+ (preprocess
+ (pps ppx_jane)))
+
+(library
  (name game)
  (modules game)
  (libraries core card deck table round)

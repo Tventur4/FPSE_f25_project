@@ -90,7 +90,7 @@ let () =
   let human = Player.make_player player_name 0 None 1000 in
   let bots = List.init num_bots ~f:(fun i ->
     let bot_data = {
-      Bott.diff = Bot.Medium; bot_type = Bot.Rule_best_hand
+      Bot.diff = Bot.Medium; bot_type = Bot.Rule_best_hand
     } in
     Player.make_player (Printf.sprintf "Bot_%d" (i + 1)) (i + 1) (Some bot_data) 1000
     ) in
