@@ -1,5 +1,5 @@
 (*
-  Testing file for the player and table modules.
+  Testing file for the Player and Table modules.
 *)
 
 open Core

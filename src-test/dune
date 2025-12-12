@@ -20,6 +20,17 @@
     player
     table))
 
+(library
+  (name round_tests)
+  (modules round_tests)
+  (libraries
+    ounit2
+    core
+    card
+    bot 
+    player
+    round))
+
 (test
  (name tests)
  (modules tests)
@@ -28,6 +39,7 @@
   core
   cards_tests
   table_tests
+  round_tests
   bot_best_hand
   bot_hand_only
   bot
