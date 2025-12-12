@@ -9,7 +9,7 @@ let list_max (lst : 'a list) (default_val : 'a) : 'a =
   | [] -> default_val
   | hd :: tl -> List.fold ~f:max ~init:hd tl
 
-let evaluate_hole_cards (cards : (Card.t * Card.t)) : int =
+let evaluate_hole_cards (cards : Card.t * Card.t) : int =
   let (c1, c2) = cards in
   let r1 = c1.rank in
   let r2 = c2.rank in
@@ -31,7 +31,7 @@ let evaluate_hole_cards (cards : (Card.t * Card.t)) : int =
   else
     0
 
-let evaluate_hand (diff_index : int) (stage : Card.betting_round) (community_cards : Card.t list) (cards : (Card.t * Card.t)) : int =
+let evaluate_hand (diff_index : int) (stage : Card.betting_round) (community_cards : Card.t list) (cards : Card.t * Card.t) : int =
   let (c1, c2) = cards in
   let card_set_hand = c2 :: (c1 :: community_cards) in
   let possible_hands = Card_set.choose_sublists 5 card_set_hand in

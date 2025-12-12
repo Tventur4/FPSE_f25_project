@@ -79,7 +79,7 @@ let rec monte_carlo_simulate (k : int) (community_cards : Card.t list) (num_play
 
     monte_carlo_simulate (k - 1) community_cards num_players hole_cards deck wins' ties'
 
-let estimate_win_probability (community_cards : Card.t list) (num_players : int) (hole_cards : (Card.t * Card.t)) (num_samples : int) : float =
+let estimate_win_probability (community_cards : Card.t list) (num_players : int) (hole_cards : Card.t * Card.t) (num_samples : int) : float =
   let (h1, h2) = hole_cards in
   let used = h1 :: h2 :: community_cards in
   let deck = List.filter ~f:(fun c -> not (List.mem used c ~equal:Card.equal)) sorted_deck in

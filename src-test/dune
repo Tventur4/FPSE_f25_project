@@ -32,6 +32,19 @@
     table
     round))
 
+(library
+  (name bot_tests)
+  (modules bot_tests)
+  (libraries
+    ounit2
+    core
+    card
+    deck
+    card_set
+    bot_hand_only
+    bot_best_hand
+    bot))
+
 (test
  (name tests)
  (modules tests)
