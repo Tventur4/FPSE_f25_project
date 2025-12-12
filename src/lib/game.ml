@@ -43,7 +43,7 @@ let next_street (game : t) : t =
       (* burn 1, deal flop (3) *)
       let _, deck_after_burn = Deck.draw_card game.deck in
       let (cards, deck') = draw_n_cards deck_after_burn 3 in
-      let new_round = advance_round game.current_round in
+      let new_round = Round.reset_for_next_stage game.current_round Card.Flop in
       { game with
         deck = deck'
       ; community_cards = game.community_cards @ cards
@@ -54,7 +54,7 @@ let next_street (game : t) : t =
       (* burn 1, deal turn (1) *)
       let _, deck_after_burn = Deck.draw_card game.deck in
       let (cards, deck') = draw_n_cards deck_after_burn 1 in
-      let new_round = advance_round game.current_round in
+      let new_round = Round.reset_for_next_stage game.current_round Card.Turn in
       { game with
         deck = deck'
       ; community_cards = game.community_cards @ cards
@@ -65,7 +65,7 @@ let next_street (game : t) : t =
       (* burn 1, deal river (1) *)
       let _, deck_after_burn = Deck.draw_card game.deck in
       let (cards, deck') = draw_n_cards deck_after_burn 1 in
-      let new_round = advance_round game.current_round in
+      let new_round = Round.reset_for_next_stage game.current_round Card.River in
       { game with
         deck = deck'
       ; community_cards = game.community_cards @ cards
@@ -74,7 +74,7 @@ let next_street (game : t) : t =
       }
   | Card.River ->
       (* advance to showdown *)
-      let new_round = advance_round game.current_round in
+      let new_round = Round.reset_for_next_stage game.current_round Card.Showdown in
       { game with
         current_round = new_round
       ; pot = new_round.pot

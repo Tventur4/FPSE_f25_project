@@ -112,7 +112,7 @@ let apply_action (state: round_state) (player : Player.t) (act : Card.action) :
           pot = state.pot + amount;
           contributions = update_contribution state player amount;
           table = Table.advance_turn state.table;
-          to_act = remove_from_to_act (Table.current_players state.table) player
+          to_act = remove_from_to_act (Table.get_active_players state.table) player
         }
     | Raise amount -> 
       (* let total_wager = current_contrib + amount in *)
@@ -130,6 +130,13 @@ let apply_action (state: round_state) (player : Player.t) (act : Card.action) :
           pot = state.pot + cost;
           contributions = update_contribution state player cost;
           table = Table.advance_turn state.table;
-          to_act = remove_from_to_act (Table.current_players state.table) player
+          to_act = remove_from_to_act (Table.get_active_players state.table) player
         }
       
+let reset_for_next_stage (state : round_state) (new_stage : Card.betting_round) : round_state =
+  {
+    state with
+    current_bet = 0; (* reset betting requirements *)
+    contributions = []; (*clear player contributions for the new street*)
+    to_act = Table.get_active_players state.table;
+  }
