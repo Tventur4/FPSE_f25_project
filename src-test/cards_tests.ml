@@ -7,6 +7,39 @@ open OUnit2
 
 let deck = Deck.sorted_deck
 
+let seven_card_list_1 = 
+  [ {Card.suit = Hearts ; rank = Jack}
+  ; {Card.suit = Diamonds ; rank = Jack}
+  ; {Card.suit = Spades ; rank = Jack}
+  ; {Card.suit = Clubs ; rank = Three}
+  ; {Card.suit = Hearts ; rank = Three}
+  ; {Card.suit = Diamonds ; rank = Seven}
+  ; {Card.suit = Spades ; rank = Queen}]
+
+let seven_card_list_2 = 
+  [ {Card.suit = Hearts ; rank = Jack}
+  ; {Card.suit = Diamonds ; rank = Jack}
+  ; {Card.suit = Spades ; rank = Two}
+  ; {Card.suit = Clubs ; rank = Four}
+  ; {Card.suit = Hearts ; rank = Six}
+  ; {Card.suit = Diamonds ; rank = Eight}
+  ; {Card.suit = Spades ; rank = Queen}]
+
+let seven_card_list_3 = 
+  [ {Card.suit = Spades ; rank = Jack}
+  ; {Card.suit = Spades ; rank = Ten}
+  ; {Card.suit = Spades ; rank = Nine}
+  ; {Card.suit = Spades ; rank = Eight}
+  ; {Card.suit = Spades ; rank = Seven}
+  ; {Card.suit = Hearts ; rank = Seven}
+  ; {Card.suit = Clubs ; rank = Seven}]
+
+let hand_1 = Card_set.of_7_cards seven_card_list_1
+
+let hand_2 = Card_set.of_7_cards seven_card_list_2
+
+let hand_3 = Card_set.of_7_cards seven_card_list_3
+
 let test_card_to_int _ =
   let rec card_matches_index (index : int) (deck : Deck.t) : bool =
     let card, rest = Deck.draw_card deck in
@@ -33,8 +66,20 @@ let test_deck_num_cards _ =
   in
   assert_equal true @@ correct_size_deck 0 deck
 
+let test_of_7_cards _ =
+  assert_equal 6 @@ Card_set.value_of_hand hand_1;
+  assert_equal 1 @@ Card_set.value_of_hand hand_2;
+  assert_equal 8 @@ Card_set.value_of_hand hand_3
+
+let test_compare_hands _ =
+  assert_equal true @@ (Card_set.compare hand_1 hand_2 > 0);
+  assert_equal true @@ (Card_set.compare hand_1 hand_3 < 0);
+  assert_equal true @@ (Card_set.compare hand_2 hand_3 < 0)
+
 let series =
   "cards_tests" >:::
   [ "card_to_int" >:: test_card_to_int
   ; "int_to_card" >:: test_int_to_card
-  ; "deck_num_cards" >:: test_deck_num_cards]
+  ; "deck_num_cards" >:: test_deck_num_cards
+  ; "of_7_cards" >:: test_of_7_cards
+  ; "compare_hands" >:: test_compare_hands]

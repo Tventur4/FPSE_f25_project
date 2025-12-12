@@ -12,7 +12,7 @@ type t = Card.t list [@@deriving sexp]
   @return A standard deck.
 *)
 let sorted_deck : t =
-  let suits = [Card.Spades; Card.Hearts; Card.Diamonds; Card.Clubs] in
+  let suits = [Card.Clubs; Card.Diamonds; Card.Hearts; Card.Spades] in
   let ranks =
     [ Card.Two; Card.Three; Card.Four; Card.Five; Card.Six; Card.Seven
     ; Card.Eight; Card.Nine; Card.Ten; Card.Jack; Card.Queen; Card.King

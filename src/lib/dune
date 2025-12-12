@@ -27,6 +27,13 @@
  (pps ppx_jane)))
 
 (library
+ (name interface)
+ (modules interface)
+ (libraries core card player round game)
+ (preprocess
+ (pps ppx_jane)))
+
+(library
  (name game)
  (modules game)
  (libraries core card deck table round)
@@ -51,13 +58,6 @@
  (name bot)
  (modules bot)
  (libraries core card deck card_set bot_hand_only bot_best_hand)
- (preprocess
- (pps ppx_jane)))
-
-(library
- (name interface)
- (modules interface)
- (libraries core card player round game)
  (preprocess
  (pps ppx_jane)))
 

@@ -20,9 +20,9 @@
   bot
   card_set
   card
+  interface
   deck
   game
-  interface
   player
   round
   table))

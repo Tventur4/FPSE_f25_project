@@ -79,7 +79,6 @@ let display_showdown (game : Game.t) (results : (Player.t * string) list) : unit
     in
     printf "%s shows: %s (Hand: %s)\n" p.name cards_str hand_desc
     );
-
 (*given a winner and an amount (calculated from the pot) output the winner and the amount they've won*)
 let announce_winner (winner : Player.t) (amount : int) : unit =
   printf "%s wins $%d.\n" winner.name amount;
@@ -123,7 +122,7 @@ let prompt_play_again () : bool =
     String.equal lower "y" || String.equal lower "yes"
   | None -> false
 
-let rec prompt_for_action (game : Game.t) : Round.action = 
+let rec prompt_for_action (game : Game.t) : Card.action = 
   let current_bet = game.current_round.current_bet in
 
   if current_bet = 0 then
