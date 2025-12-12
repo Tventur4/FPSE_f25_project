@@ -28,7 +28,7 @@ val display_showdown : Game.t -> (Player.t * string) list -> unit
  [announce_winner player amount] prints a simple message stating that
  [player] won a pot of [amount]. used when players bets and everybody else folds.
 *)
-val announce_winner : Player.t -> int -> unit
+val announce_winner : Player.t -> Chips.t -> unit
 
 (* functions for reading for the console. *)
 

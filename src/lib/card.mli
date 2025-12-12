@@ -12,7 +12,7 @@ type rank = Two | Three | Four | Five | Six | Seven | Eight | Nine | Ten | Jack 
     Comparison is ascending on the rank-value with respect to poker. Note that this is why the Ace is valued higher 
     than every other rank. *)
 
-type action = Fold | Check | Call | Bet of int | Raise of int [@@deriving sexp]
+type action = Fold | Check | Call | Bet of Chips.t | Raise of Chips.t [@@deriving sexp]
 
 type betting_round = PreFlop | Flop | Turn | River | Showdown [@@deriving sexp, equal]
 

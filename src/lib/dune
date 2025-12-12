@@ -1,7 +1,7 @@
 (library
  (name card)
  (modules card)
- (libraries core)
+ (libraries core chips)
  (preprocess
  (pps ppx_jane)))
 
@@ -22,7 +22,7 @@
 (library
  (name player)
  (modules player)
- (libraries core card bot)
+ (libraries core card bot chips)
  (preprocess
  (pps ppx_jane)))
 
@@ -50,7 +50,7 @@
 (library
  (name bot)
  (modules bot)
- (libraries core card deck card_set bot_hand_only bot_best_hand)
+ (libraries core card deck card_set bot_hand_only bot_best_hand chips)
  (preprocess
  (pps ppx_jane)))
 
@@ -64,7 +64,7 @@
 (library
  (name round)
  (modules round)
- (libraries core card player table)
+ (libraries core card player table chips)
  (preprocess
  (pps ppx_jane)))
 
@@ -78,14 +78,14 @@
 (library
  (name game)
  (modules game)
- (libraries core card deck table round)
+ (libraries core card deck table round chips)
  (preprocess
  (pps ppx_jane)))
 
 (library
  (name interface)
  (modules interface)
- (libraries core card game round player table)
+ (libraries core card game round player table chips)
  (preprocess
  (pps ppx_jane)
 ))

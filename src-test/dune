@@ -9,41 +9,44 @@
   deck))
 
 (library
-  (name table_tests)
-  (modules table_tests)
-  (libraries
-    ounit2
-    core
-    card
-    deck
-    bot
-    player
-    table))
+ (name table_tests)
+ (modules table_tests)
+ (libraries
+   ounit2
+   core
+   card
+   deck
+   bot
+   player
+   table
+   chips))
 
 (library
-  (name round_tests)
-  (modules round_tests)
-  (libraries
-    ounit2
-    core
-    card
-    bot 
-    player
-    table
-    round))
+ (name round_tests)
+ (modules round_tests)
+ (libraries
+   ounit2
+   core
+   card
+   bot 
+   player
+   table
+   round
+   chips))
 
 (library
-  (name bot_tests)
-  (modules bot_tests)
-  (libraries
-    ounit2
-    core
-    card
-    deck
-    card_set
-    bot_hand_only
-    bot_best_hand
-    bot))
+ (name bot_tests)
+ (modules bot_tests)
+ (libraries
+   ounit2
+   core
+   card
+   deck
+   card_set
+   bot_hand_only
+   bot_best_hand
+   bot
+   chips))
 
 (test
  (name tests)

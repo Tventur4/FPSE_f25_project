@@ -26,7 +26,8 @@ let rotate_left lst k =
 (* player is active if they are not folded and have chips *)
 (* TODO: add to player instead? *)
 let player_is_active (p : Player.t) : bool =
-  not p.folded && p.chip_stack > 0
+  let chip_stack_int = Chips.to_int p.chip_stack in
+  not p.folded && chip_stack_int > 0
 
 (*End of helper fucntions*)
 

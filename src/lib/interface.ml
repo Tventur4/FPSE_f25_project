@@ -25,7 +25,7 @@ let display_game_state (game : Game.t) : unit =
   match game.current_round.stage with
   | Card.PreFlop -> ()
   | _ -> 
-    printf "Pot: $%d\n" game.pot;
+    printf "Pot: $%d\n" (Chips.to_int game.pot);
     print_string "Community Cards: [";
     (*small function to output to_string of each community card encountered*)
     List.iter game.community_cards ~f:(fun c -> printf "%s " (Card.to_string c));
@@ -57,18 +57,19 @@ let display_player_view (game: Game.t) : unit =
         print_endline "]"
       );
     
-    printf "Your Chips: $%d\n" h.chip_stack;
+    printf "Your Chips: $%d\n" (Chips.to_int h.chip_stack);
 
-    let call_cost = game.current_round.current_bet - (Round.get_contribution game.current_round h) in
-    (*money you owe to stay in the hand*)
-    if call_cost > 0 then
-      printf "Current Bet to Call: $%d\n" call_cost;
+    (match Chips.subtract game.current_round.current_bet (Round.get_contribution game.current_round h) with
+    | Error _ -> ()
+    | Ok call_cost ->
+      if Chips.(call_cost > Chips.zero) then
+        printf "Current Bet to Call: $%d\n" (Chips.to_int call_cost));
 
-    printf "Pot: $%d\n\n" game.pot
+    printf "Pot: $%d\n\n" (Chips.to_int game.pot)
 
 let display_showdown (game : Game.t) (results : (Player.t * string) list) : unit =
   print_endline "--- SHOWDOWN ---";
-  printf "Pot: $%d\n" game.pot;
+  printf "Pot: $%d\n" (Chips.to_int game.pot);
 
   (*run through each of the players and the highest hand possible they can make*)
   List.iter results ~f:(fun (p, hand_desc) -> 
@@ -80,10 +81,10 @@ let display_showdown (game : Game.t) (results : (Player.t * string) list) : unit
     printf "%s shows: %s (Hand: %s)\n" p.name cards_str hand_desc
     )
 (*given a winner and an amount (calculated from the pot) output the winner and the amount they've won*)
-let announce_winner (winner : Player.t) (amount : int) : unit =
-  printf "%s wins $%d.\n" winner.name amount;
+let announce_winner (winner : Player.t) (amount : Chips.t) : unit =
+  printf "%s wins $%d.\n" winner.name (Chips.to_int amount);
   print_endline "[Chip Counts]";
-  printf "%s: $%d\n" winner.name (winner.chip_stack + amount)
+  printf "%s: $%d\n" winner.name (Chips.to_int (Chips.add winner.chip_stack amount))
 
 (*end of Display functions*)
 
@@ -132,7 +133,7 @@ let prompt_play_again () : bool =
 let rec prompt_for_action (game : Game.t) : Card.action = 
   let current_bet = game.current_round.current_bet in
 
-  if current_bet = 0 then
+  if Chips.(current_bet = Chips.zero) then
     print_endline "Your action? (Options: [f]old, [c]heck, [b]et [amount])"
   else
     print_endline "Your action? (Options: [f]old, [c]all, [r]aise [amount])";
@@ -149,7 +150,7 @@ let rec prompt_for_action (game : Game.t) : Card.action =
     (* different actions a player can make*)
     | ["f"] | ["fold"] -> Card.Fold
     | ["c"] | ["check"] | ["call"] ->
-      if current_bet = 0 then Card.Check else Card.Call
+      if Chips.(current_bet = Chips.zero) then Card.Check else Card.Call
     | cmd :: args :: _ ->
       let is_bet = List.mem ["b"; "bet"] cmd ~equal:String.equal in
       let is_raise = List.mem ["r"; "raise"] cmd ~equal:String.equal in
@@ -157,12 +158,15 @@ let rec prompt_for_action (game : Game.t) : Card.action =
       if is_bet || is_raise then
         let lower_arg = Stdlib.String.lowercase_ascii args in
         let amount =
-          if String.equal lower_arg "pot" || String.equal lower_arg "p" then game.pot
+          if String.equal lower_arg "pot" || String.equal lower_arg "p" then 
+            Chips.to_int game.pot
           else Option.value (int_of_string_opt args) ~default:0
         in
         if amount <= 0 then (print_endline "Invalid amount."; prompt_for_action game)
-        else if is_bet then Card.Bet amount
-        else Card.Raise amount
+        else 
+          let chips_amount = Chips.of_int amount in
+          if is_bet then Card.Bet chips_amount
+          else Card.Raise chips_amount
       else
         (print_endline "Invalid command."; prompt_for_action game)
       

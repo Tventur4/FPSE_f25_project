@@ -40,7 +40,9 @@ let rec betting_loop (game : Game.t) : Game.t =
         let next_players = List.map current_players ~f:(fun p ->
           let old_stack = p.chip_stack in
           let x = Round.get_contribution round_state p in
-          {p with chip_stack = old_stack - x}
+          {p with chip_stack = match  Chips.subtract old_stack x with
+          | Ok new_stack -> new_stack
+          | Error msg -> raise (Failure msg)}
         ) in
         let new_game = {
           game with current_round = new_round_state;
@@ -98,12 +100,12 @@ let rec game_loop (game : Game.t) : unit =
 
 let () =
   let (player_name, num_bots, bot_diff) = Interface.prompt_for_setup () in
-  let human = Player.make_player player_name 0 None 1000 in
+  let human = Player.make_player player_name 0 None (Chips.of_int 1000) in
   let bots = List.init num_bots ~f:(fun i ->
     let bot_data = {
       Bot.diff = Bot.int_to_difficulty bot_diff; bot_type = Bot.Rule_best_hand
     } in
-    Player.make_player (Printf.sprintf "Bot_%d" (i + 1)) (i + 1) (Some bot_data) 1000
+    Player.make_player (Printf.sprintf "Bot_%d" (i + 1)) (i + 1) (Some bot_data) (Chips.of_int 1000)
     ) in
   let players = human :: bots in
 

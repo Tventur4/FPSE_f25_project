@@ -6,18 +6,18 @@
 
 type round_state = {
   stage : Card.betting_round;
-  pot : int;
-  current_bet : int;
+  pot : Chips.t;
+  current_bet : Chips.t;
   table : Table.t;
   to_act : Player.t list;      (* players in order who still need to act *)
   folded : Player.t list;      (* players who have folded this round *)
-  contributions : (int * int) list;  (* amounts contributed this round *)
+  contributions : (int * Chips.t) list;  (* amounts contributed this round *)
 } [@@deriving sexp]
 
 val init : Table.t -> round_state
 (** [init players] creates a fresh betting round with all players active. *)
 
-val get_contribution : round_state -> Player.t -> int
+val get_contribution : round_state -> Player.t -> Chips.t
 (** FILL THIS IN *)
 
 val apply_action :

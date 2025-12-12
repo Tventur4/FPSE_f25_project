@@ -11,7 +11,7 @@ type t =
   { table : Table.t
   ; deck : Deck.t
   ; community_cards : Card.t list
-  ; pot : int (*TODO: make a chip module*)
+  ; pot : Chips.t
   ; current_round : Round.round_state (*Preflop, flop, showdown.. etc.*)
 } [@@deriving sexp]
 

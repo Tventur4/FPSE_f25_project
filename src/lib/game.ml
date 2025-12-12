@@ -4,7 +4,7 @@ type t =
   { table : Table.t
   ; deck : Deck.t
   ; community_cards : Card.t list
-  ; pot : int
+  ; pot : Chips.t
   ; current_round : Round.round_state
   } [@@deriving sexp]
 

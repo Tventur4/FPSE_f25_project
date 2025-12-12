@@ -45,12 +45,12 @@ let com_cards6 =
   ; { Card.suit = Spades ; rank = Seven }]
 
 let test_fold_bot _ =
-  assert_equal Card.Fold @@ Bot.make_move bot1 PreFlop 100 [] 2 hole_cards1 1000
+  assert_equal Card.Fold @@ Bot.make_move bot1 PreFlop (Chips.of_int 100) [] 2 hole_cards1 (Chips.of_int 1000)
 
 let test_all_in_bot _ =
-  assert_equal (Card.Bet 1000) @@ Bot.make_move bot2 PreFlop 0 [] 2 hole_cards1 1000;
-  assert_equal (Card.Raise 500) @@ Bot.make_move bot2 PreFlop 500 [] 2 hole_cards1 1000;
-  assert_equal Card.Call @@ Bot.make_move bot2 PreFlop 1250 [] 2 hole_cards1 1000
+  assert_equal (Card.Bet (Chips.of_int 1000)) @@ Bot.make_move bot2 PreFlop Chips.zero [] 2 hole_cards1 (Chips.of_int 1000);
+  assert_equal (Card.Raise (Chips.of_int 500)) @@ Bot.make_move bot2 PreFlop (Chips.of_int 500) [] 2 hole_cards1 (Chips.of_int 1000);
+  assert_equal Card.Call @@ Bot.make_move bot2 PreFlop (Chips.of_int 1250) [] 2 hole_cards1 (Chips.of_int 1000)
 
 let test_hand_only_bot_bracket_preflop _ =
   assert_equal 0 @@ Bot_hand_only.get_bracket_hand_only 0 PreFlop [] hole_cards1;
@@ -66,17 +66,17 @@ let test_hand_only_bot_bracket_flop _ =
   assert_equal 0 @@ Bot_hand_only.get_bracket_hand_only 0 Flop com_cards4 hole_cards1
 
 let test_hand_only_bot_make_move _ =
-  assert_equal Card.Fold @@ Bot.make_move bot3 Flop 0 com_cards4 2 hole_cards1 1000;
-  assert_equal Card.Check @@ Bot.make_move bot3 Flop 0 com_cards3 2 hole_cards2 1000;
-  assert_equal Card.Fold @@ Bot.make_move bot3 Flop 1001 com_cards2 2 hole_cards2 1000;
-  assert_equal Card.Call @@ Bot.make_move bot3 Flop 200 com_cards2 2 hole_cards2 1000;
-  assert_equal Card.Fold @@ Bot.make_move bot3 Flop 300 com_cards2 2 hole_cards2 1000;
-  assert_equal (Card.Bet 100) @@ Bot.make_move bot3 PreFlop 0 [] 2 hole_cards4 1000;
-  assert_equal (Card.Bet 125) @@ Bot.make_move bot5 Flop 0 com_cards1 2 hole_cards4 1000;
-  assert_equal (Card.Raise 100) @@ Bot.make_move bot3 Turn 500 com_cards5 2 hole_cards4 1000;
-  assert_equal (Card.Raise 250) @@ Bot.make_move bot3 River 500 com_cards6 2 hole_cards4 1000;
-  assert_equal Card.Call @@ Bot.make_move bot3 Flop 100 com_cards1 2 hole_cards4 1000;
-  assert_equal Card.Fold @@ Bot.make_move bot3 Flop 350 com_cards1 2 hole_cards4 1000
+  assert_equal Card.Fold @@ Bot.make_move bot3 Flop Chips.zero com_cards4 2 hole_cards1 (Chips.of_int 1000);
+  assert_equal Card.Check @@ Bot.make_move bot3 Flop Chips.zero com_cards3 2 hole_cards2 (Chips.of_int 1000);
+  assert_equal Card.Fold @@ Bot.make_move bot3 Flop (Chips.of_int 1001) com_cards2 2 hole_cards2 (Chips.of_int 1000);
+  assert_equal Card.Call @@ Bot.make_move bot3 Flop (Chips.of_int 200) com_cards2 2 hole_cards2 (Chips.of_int 1000);
+  assert_equal Card.Fold @@ Bot.make_move bot3 Flop (Chips.of_int 300) com_cards2 2 hole_cards2 (Chips.of_int 1000);
+  assert_equal (Card.Bet (Chips.of_int 100)) @@ Bot.make_move bot3 PreFlop Chips.zero [] 2 hole_cards4 (Chips.of_int 1000);
+  assert_equal (Card.Bet (Chips.of_int 125)) @@ Bot.make_move bot5 Flop Chips.zero com_cards1 2 hole_cards4 (Chips.of_int 1000);
+  assert_equal (Card.Raise (Chips.of_int 100)) @@ Bot.make_move bot3 Turn (Chips.of_int 500) com_cards5 2 hole_cards4 (Chips.of_int 1000);
+  assert_equal (Card.Raise (Chips.of_int 250)) @@ Bot.make_move bot3 River (Chips.of_int 500) com_cards6 2 hole_cards4 (Chips.of_int 1000);
+  assert_equal Card.Call @@ Bot.make_move bot3 Flop (Chips.of_int 100) com_cards1 2 hole_cards4 (Chips.of_int 1000);
+  assert_equal Card.Fold @@ Bot.make_move bot3 Flop (Chips.of_int 350) com_cards1 2 hole_cards4 (Chips.of_int 1000)
 
 let series =
   "bot_tests" >:::

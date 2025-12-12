@@ -12,18 +12,19 @@ type t =
   ; player_id : int
   ; player_type : player_type
   ; folded : bool
-  ; chip_stack : int
+  ; chip_stack : Chips.t
   ; hole_cards : (Card.t * Card.t) option
   } [@@deriving sexp]
 
-val make_player : string -> int -> Bot.t option -> int -> t
+val make_player : string -> int -> Bot.t option -> Chips.t -> t
 (** [make_player name id bot chips] is a new player with the specified attributes. *)
 
-val add_chips : t -> int -> t
+val add_chips : t -> Chips.t -> t
 (** [add_chips player n] adds [n] chips to the chip stack of [player]. *)
 
-val remove_chips : t -> int -> t
-(** [remove_chips player n] removes [n] chips from the chip stack of [player]. *)
+val remove_chips : t -> Chips.t -> (t, string) result
+(** [remove_chips player n] removes [n] chips from the chip stack of [player].
+    Returns [Error msg] if [player] has insufficient chips. *)
 
 val set_hole_cards : t -> (Card.t * Card.t) -> t
 (** [set_hole_cards player cards] sets the hole cards of [player] which is now a tuple. *)
