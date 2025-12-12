@@ -89,7 +89,7 @@ let announce_winner (winner : Player.t) (amount : int) : unit =
 
 (*start of Input Functions*)
 
-let prompt_for_setup () : (string * int) =
+let prompt_for_setup () : (string * int * int) =
   clear_screen ();
   print_endline "Welcome to OCAML Hold 'Em!\n";
   print_string "Enter your name:\n";
@@ -107,11 +107,18 @@ let prompt_for_setup () : (string * int) =
     | Some s -> Option.value (int_of_string_opt (String.strip s)) ~default:1
     | None -> 1
   in
+  printf "Set the difficulty of the bots (0-3):\n";
+  Out_channel.flush stdout;
+  let bot_diff =
+    match In_channel.input_line In_channel.stdin with
+    | Some s -> Option.value (int_of_string_opt (String.strip s)) ~default:0
+    | None -> 0
+  in
   print_endline "Setting up table...";
   print_endline "Blinds are $5 (Small) / $10 (Big).";
   print_endline "All players start with $1000.\n";
   (*return a tuple of name and num_bots*)
-  (name, num_bots)
+  (name, num_bots, bot_diff)
 
 let prompt_play_again () : bool =
   print_string "Play another hand? ([y]es, [n]o)\n> ";

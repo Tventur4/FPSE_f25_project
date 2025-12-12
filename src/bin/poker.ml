@@ -40,7 +40,7 @@ let rec betting_loop (game : Game.t) : Game.t =
           pot = new_round_state.pot
         } in
         let action_str = Sexp.to_string (Card.sexp_of_action action) in
-        print_endline (Printf.sprintf "\n %s perforsm %s\n" player.name action_str);
+        print_endline (Printf.sprintf "\n %s performs %s\n" player.name action_str);
 
         betting_loop new_game
       
@@ -88,13 +88,12 @@ let rec game_loop (game : Game.t) : unit =
     let next_game = Game.next_street game_after_betting in
     game_loop next_game
 
-
 let () =
-  let (player_name, num_bots) = Interface.prompt_for_setup () in
+  let (player_name, num_bots, bot_diff) = Interface.prompt_for_setup () in
   let human = Player.make_player player_name 0 None 1000 in
   let bots = List.init num_bots ~f:(fun i ->
     let bot_data = {
-      Bot.diff = Bot.Medium; bot_type = Bot.Rule_best_hand
+      Bot.diff = Bot.int_to_difficulty bot_diff; bot_type = Bot.Rule_best_hand
     } in
     Player.make_player (Printf.sprintf "Bot_%d" (i + 1)) (i + 1) (Some bot_data) 1000
     ) in

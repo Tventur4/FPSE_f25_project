@@ -14,6 +14,14 @@ type t =
   { diff : difficulty
   ; bot_type : bot_type} [@@deriving sexp]
 
+let int_to_difficulty (diff_index : int) : difficulty =
+  match diff_index with
+  | 0 -> Easy
+  | 1 -> Medium
+  | 2 -> Hard
+  | 3 -> Expert
+  | _ -> Easy
+
 let difficulty_to_int (diff : difficulty) : int =
   match diff with
   | Easy -> 0
