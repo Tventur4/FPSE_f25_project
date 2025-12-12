@@ -78,18 +78,18 @@ let display_showdown (game : Game.t) (results : (Player.t * string) list) : unit
       | None -> "[NA]"
     in
     printf "%s shows: %s (Hand: %s)\n" p.name cards_str hand_desc
-    );
+    )
 (*given a winner and an amount (calculated from the pot) output the winner and the amount they've won*)
 let announce_winner (winner : Player.t) (amount : int) : unit =
   printf "%s wins $%d.\n" winner.name amount;
   print_endline "[Chip Counts]";
-  printf "%s: $%d\n" winner.name (winner.chip_stack + amount);
+  printf "%s: $%d\n" winner.name (winner.chip_stack + amount)
 
 (*end of Display functions*)
 
 (*start of Input Functions*)
 
-let prompt_for_setup () : (string * int) =
+let prompt_for_setup () : (string * int * int) =
   clear_screen ();
   print_endline "Welcome to OCAML Hold 'Em!\n";
   print_string "Enter your name:\n";
@@ -107,11 +107,18 @@ let prompt_for_setup () : (string * int) =
     | Some s -> Option.value (int_of_string_opt (String.strip s)) ~default:1
     | None -> 1
   in
+  printf "Set the difficulty of the bots (0-3):\n";
+  Out_channel.flush stdout;
+  let bot_diff =
+    match In_channel.input_line In_channel.stdin with
+    | Some s -> Option.value (int_of_string_opt (String.strip s)) ~default:0
+    | None -> 0
+  in
   print_endline "Setting up table...";
   print_endline "Blinds are $5 (Small) / $10 (Big).";
   print_endline "All players start with $1000.\n";
   (*return a tuple of name and num_bots*)
-  (name, num_bots)
+  (name, num_bots, bot_diff)
 
 let prompt_play_again () : bool =
   print_string "Play another hand? ([y]es, [n]o)\n> ";
@@ -140,21 +147,22 @@ let rec prompt_for_action (game : Game.t) : Card.action =
     let parts = String.split ~on: ' ' (String.strip input) in
     match parts with
     (* different actions a player can make*)
-    | ["f"] | ["fold"] -> Round.Fold
+    | ["f"] | ["fold"] -> Card.Fold
     | ["c"] | ["check"] | ["call"] ->
-      if current_bet = 0 then Round.Check else Round.Call
+      if current_bet = 0 then Card.Check else Card.Call
     | cmd :: args :: _ ->
       let is_bet = List.mem ["b"; "bet"] cmd ~equal:String.equal in
       let is_raise = List.mem ["r"; "raise"] cmd ~equal:String.equal in
 
       if is_bet || is_raise then
+        let lower_arg = Stdlib.String.lowercase_ascii args in
         let amount =
-          if String.lowercase arg = "pot" || String.lowercase arg = "p" then game.pot
-          else Option.value (int_of_string_opt arg) ~default:0
+          if String.equal lower_arg "pot" || String.equal lower_arg "p" then game.pot
+          else Option.value (int_of_string_opt args) ~default:0
         in
         if amount <= 0 then (print_endline "Invalid amount."; prompt_for_action game)
-        else if is_bet then Round.Bet amount
-        else Round.Raise amount
+        else if is_bet then Card.Bet amount
+        else Card.Raise amount
       else
         (print_endline "Invalid command."; prompt_for_action game)
       

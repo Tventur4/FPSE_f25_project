@@ -42,11 +42,12 @@ val prompt_for_action : Game.t -> Card.action
 
 (**
  [prompt_for_setup ()] asks the user for initial game parameters, such as 
- their name and the number of bot players. Initially we're going to test with 1 player and 1 bot.
- returns: [(player_name, num_bots)].
+ their name, the number of bot players, and the difficulty of the bots. 
+ Initially we're going to test with 1 player and 1 bot.
+ returns: [(player_name, num_bots, bot_diff)].
 *)
+val prompt_for_setup : unit -> (string * int * int)
 
-val prompt_for_setup : unit -> (string * int)
 (**
  [prompt_play_again ()] asks the user if they wish to play another hand and returns [true] or [false].
 *)

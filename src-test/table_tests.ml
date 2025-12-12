@@ -5,14 +5,14 @@
 open Core
 open OUnit2
 
-let bot_1 = {Bot.diff = Easy ; bot_type = All_in}
-let bot_2 = {Bot.diff = Easy ; bot_type = Always_fold}
+let bot1 = {Bot.diff = Easy ; bot_type = All_in}
+let bot2 = {Bot.diff = Easy ; bot_type = Always_fold}
 
 let player_tobi = Player.make_player "Tobi" 0 None 100
 let player_vrinda = Player.make_player "Vrinda" 1 None 100
 let player_timmy = Player.make_player "Timmy" 2 None 100
-let player_super_evil_bot = Player.make_player "Super Evil Bot" 3 (Some bot_1) 100
-let player_broke_bot = Player.make_player "Very Broke Bot" 4 (Some bot_2) 0
+let player_super_evil_bot = Player.make_player "Super Evil Bot" 3 (Some bot1) 100
+let player_broke_bot = Player.make_player "Very Broke Bot" 4 (Some bot2) 0
 
 let players = [player_tobi ; player_vrinda ; player_timmy ; player_super_evil_bot]
 let players_modified = [player_tobi ; player_vrinda ; player_timmy ; player_super_evil_bot ; player_broke_bot]
@@ -41,14 +41,14 @@ let test_table_init _ =
   assert_equal player_tobi @@ Table.get_player_at_turn table
 
 let test_table_advance_turn _ =
-  let table_1 = Table.advance_turn table in
-  assert_equal player_vrinda @@ Table.get_player_at_turn table_1;
-  let table_2 = Table.advance_turn table_1 in
-  assert_equal player_timmy @@ Table.get_player_at_turn table_2;
-  let table_3 = Table.advance_turn table_2 in
-  assert_equal player_super_evil_bot @@ Table.get_player_at_turn table_3;
-  let table_4 = Table.advance_turn table_3 in
-  assert_equal player_tobi @@ Table.get_player_at_turn table_4
+  let table1 = Table.advance_turn table in
+  assert_equal player_vrinda @@ Table.get_player_at_turn table1;
+  let table2 = Table.advance_turn table1 in
+  assert_equal player_timmy @@ Table.get_player_at_turn table2;
+  let table3 = Table.advance_turn table2 in
+  assert_equal player_super_evil_bot @@ Table.get_player_at_turn table3;
+  let table4 = Table.advance_turn table3 in
+  assert_equal player_tobi @@ Table.get_player_at_turn table4
 
 let test_table_inactive_player _ =
   assert_equal players @@ Table.get_active_players table_modified;

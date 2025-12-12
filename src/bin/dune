@@ -1,8 +1,16 @@
 (executable
  (name poker)
+ (public_name poker)
  (modules poker)
  (libraries
    core
    game
-   cmdliner
-   ))
+   interface
+   table
+   player
+   bot
+   card 
+   round
+   deck
+   )
+  (preprocess (pps ppx_jane)))

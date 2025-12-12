@@ -31,3 +31,5 @@ val apply_action :
 
 val is_over : round_state -> bool
 (** Whether all players have acted and bets are equal or all but one folded. *)
+
+val reset_for_next_stage : round_state -> Card.betting_round -> round_state

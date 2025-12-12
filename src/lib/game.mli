@@ -39,7 +39,7 @@ val next_street : t -> t
 preflop to flop to ... etc.
 a good portion of the entire logic shoudl be in here? hopefully broken down in sub functions idk
 *)
-val advance_round : Round.round_state -> Round.round_state
+(* val advance_round : Round.round_state -> Round.round_state *)
 
 (*not needed anymore because we have apply_action in round*)
 (* procceses a player's move and updates pot/table

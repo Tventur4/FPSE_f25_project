@@ -1,7 +1,3 @@
-(* Disables "unused variable" warning from dune while you're still solving these! *)
-[@@@ocaml.warning "-27"]
-[@@@ocaml.warning "-33"]
-
 open Core
 
 let list_max (lst : 'a list) (default_val : 'a) : 'a =
@@ -9,7 +5,7 @@ let list_max (lst : 'a list) (default_val : 'a) : 'a =
   | [] -> default_val
   | hd :: tl -> List.fold ~f:max ~init:hd tl
 
-let evaluate_hole_cards (cards : (Card.t * Card.t)) : int =
+let evaluate_hole_cards (cards : Card.t * Card.t) : int =
   let (c1, c2) = cards in
   let r1 = c1.rank in
   let r2 = c2.rank in
@@ -28,45 +24,31 @@ let evaluate_hole_cards (cards : (Card.t * Card.t)) : int =
     then 2
   else if pair_of Seven || pair_of Six || pair_of Five || pair_of Four || pair_of Three || pair_of Two || (Card.equal_rank high King && suited && Card.compare_rank low Ten >= 0) || (Card.equal_rank high Queen && suited && Card.equal_rank low Jack)
     then 1
-  else
-    0
+  else 0
 
-let evaluate_hand (stage : Card.betting_round) (community_cards : Card.t list) (cards : (Card.t * Card.t)) : int =
+let evaluate_hand (diff_index : int) (stage : Card.betting_round) (community_cards : Card.t list) (cards : Card.t * Card.t) : int =
   let (c1, c2) = cards in
   let card_set_hand = c2 :: (c1 :: community_cards) in
   let possible_hands = Card_set.choose_sublists 5 card_set_hand in
   let hand_values = List.map ~f:(function ls -> Card_set.value_of_hand (Card_set.evaluate ls)) possible_hands in
   let hand_value = list_max hand_values 0 in
-  if (hand_value > 3)
+  let lower_threshold, mid_threshold, upper_threshold =
+    match diff_index with
+    | 0 -> 0, 1, 2
+    | 1 -> 0, 1, 3
+    | 2 -> 0, 2, 3
+    | 3 -> 0, 2, 4
+    | _ -> 10, 10, 10
+  in
+  if (hand_value > upper_threshold)
     then 3
-  else if (hand_value = 3)
+  else if (hand_value > mid_threshold)
     then 2
-  else if ((Card.equal_betting_round stage Flop && hand_value > 1) || hand_value > 1)
+  else if ((Card.equal_betting_round stage Flop && hand_value > (lower_threshold - 1)) || hand_value > lower_threshold)
     then 1
   else 0
 
-let get_value_stage (stage : Card.betting_round) (community_cards : Card.t list) (cards : (Card.t * Card.t)) : int =
+let get_bracket_hand_only (diff_index : int) (stage : Card.betting_round) (community_cards : Card.t list) (cards : (Card.t * Card.t)) : int =
   match stage with
   | PreFlop -> evaluate_hole_cards cards
-  | x -> evaluate_hand x community_cards cards
-
-let rule_hand_only_move (stage : Card.betting_round) (current_bet : int) (community_cards : Card.t list) (cards : (Card.t * Card.t)) (chips : int) : Card.action =
-  let value = get_value_stage stage community_cards cards in
-  if (chips - current_bet < 0) 
-    then if (value = 3) then Call else Fold
-  else let bet_made = (current_bet <> 0) in
-  match value, stage, bet_made with
-  | 0, _, _ -> Fold
-  | 1, _, false -> Check
-  | 1, _, true -> Fold 
-  | 2, _, false -> Check
-  | 2, _, true -> Call
-  | 3, PreFlop, false -> Bet (chips / 10)
-  | 3, Flop, false -> Bet (chips / 10)
-  | 3, Turn, false -> Bet (chips / 5)
-  | 3, River, false -> Bet (chips / 2)
-  | 3, PreFlop, true -> Call
-  | 3, Flop, true -> Call
-  | 3, Turn, true -> Raise ((chips - current_bet) / 5)
-  | 3, River, true -> Raise ((chips - current_bet) / 2)
-  | _, _, _ -> Fold
+  | x -> evaluate_hand diff_index x community_cards cards

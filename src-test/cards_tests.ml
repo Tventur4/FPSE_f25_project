@@ -7,7 +7,7 @@ open OUnit2
 
 let deck = Deck.sorted_deck
 
-let seven_card_list_1 = 
+let seven_card_list1 = 
   [ {Card.suit = Hearts ; rank = Jack}
   ; {Card.suit = Diamonds ; rank = Jack}
   ; {Card.suit = Spades ; rank = Jack}
@@ -16,7 +16,7 @@ let seven_card_list_1 =
   ; {Card.suit = Diamonds ; rank = Seven}
   ; {Card.suit = Spades ; rank = Queen}]
 
-let seven_card_list_2 = 
+let seven_card_list2 = 
   [ {Card.suit = Hearts ; rank = Jack}
   ; {Card.suit = Diamonds ; rank = Jack}
   ; {Card.suit = Spades ; rank = Two}
@@ -25,7 +25,7 @@ let seven_card_list_2 =
   ; {Card.suit = Diamonds ; rank = Eight}
   ; {Card.suit = Spades ; rank = Queen}]
 
-let seven_card_list_3 = 
+let seven_card_list3 = 
   [ {Card.suit = Spades ; rank = Jack}
   ; {Card.suit = Spades ; rank = Ten}
   ; {Card.suit = Spades ; rank = Nine}
@@ -34,11 +34,11 @@ let seven_card_list_3 =
   ; {Card.suit = Hearts ; rank = Seven}
   ; {Card.suit = Clubs ; rank = Seven}]
 
-let hand_1 = Card_set.of_7_cards seven_card_list_1
+let hand1 = Card_set.of_7_cards seven_card_list1
 
-let hand_2 = Card_set.of_7_cards seven_card_list_2
+let hand2 = Card_set.of_7_cards seven_card_list2
 
-let hand_3 = Card_set.of_7_cards seven_card_list_3
+let hand3 = Card_set.of_7_cards seven_card_list3
 
 let test_card_to_int _ =
   let rec card_matches_index (index : int) (deck : Deck.t) : bool =
@@ -67,14 +67,14 @@ let test_deck_num_cards _ =
   assert_equal true @@ correct_size_deck 0 deck
 
 let test_of_7_cards _ =
-  assert_equal 6 @@ Card_set.value_of_hand hand_1;
-  assert_equal 1 @@ Card_set.value_of_hand hand_2;
-  assert_equal 8 @@ Card_set.value_of_hand hand_3
+  assert_equal 6 @@ Card_set.value_of_hand hand1;
+  assert_equal 1 @@ Card_set.value_of_hand hand2;
+  assert_equal 8 @@ Card_set.value_of_hand hand3
 
 let test_compare_hands _ =
-  assert_equal true @@ (Card_set.compare hand_1 hand_2 > 0);
-  assert_equal true @@ (Card_set.compare hand_1 hand_3 < 0);
-  assert_equal true @@ (Card_set.compare hand_2 hand_3 < 0)
+  assert_equal true @@ (Card_set.compare hand1 hand2 > 0);
+  assert_equal true @@ (Card_set.compare hand1 hand3 < 0);
+  assert_equal true @@ (Card_set.compare hand2 hand3 < 0)
 
 let series =
   "cards_tests" >:::

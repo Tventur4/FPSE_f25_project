@@ -77,3 +77,11 @@ let advance_turn (t : t) : t =
       let head = get_player_at_turn t in
       if player_is_active head then t
       else invalid_arg "Table.advance_turn: no active players"
+
+(*mark player as folded in the table list*)
+let fold_player (t: t) (p : Player.t) : t =
+  let new_players = List.map t.players ~f:(fun player ->
+    if player.player_id = p.player_id then { player with folded = true}
+    else player
+  ) in
+  {t with players = new_players}
