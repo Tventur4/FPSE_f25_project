@@ -67,14 +67,18 @@ let apply_action (state: round_state) (player : Player.t) (act : Card.action) :
     | Fold -> 
       Ok {
         state with
-          folded = player :: state.folded
-          ; to_act = remove_from_to_act state.to_act player
+          folded = player :: state.folded; 
+          to_act = remove_from_to_act state.to_act player;
+          table = Table.advance_turn state.table
       }
     | Check -> 
       if current_contrib < state.current_bet then
         Error "Cannot Check: You have to call the current bet"
       else 
-        Ok { state with to_act = remove_from_to_act state.to_act player}
+        Ok { 
+          state with 
+            to_act = remove_from_to_act state.to_act player; 
+            table = Table.advance_turn state.table}
     | Call ->
       let amount_needed = state.current_bet - current_contrib in
       (*subject to change for now but if they don't have enough chips to call just assume ALL-IN*)
@@ -83,14 +87,16 @@ let apply_action (state: round_state) (player : Player.t) (act : Card.action) :
           state with
             pot = state.pot + player.chip_stack;
             contributions = update_contribution state player player.chip_stack;
-            to_act = remove_from_to_act state.to_act player
+            to_act = remove_from_to_act state.to_act player;
+            table = Table.advance_turn state.table
         }
       else
         Ok {
           state with
             pot = state.pot + amount_needed;
             contributions = update_contribution state player amount_needed;
-            to_act = remove_from_to_act state.to_act player
+            to_act = remove_from_to_act state.to_act player;
+            table = Table.advance_turn state.table
         }
     | Bet amount ->
       if state.current_bet > 0 then
@@ -105,6 +111,7 @@ let apply_action (state: round_state) (player : Player.t) (act : Card.action) :
           current_bet = amount;
           pot = state.pot + amount;
           contributions = update_contribution state player amount;
+          table = Table.advance_turn state.table;
           to_act = remove_from_to_act (Table.current_players state.table) player
         }
     | Raise amount -> 
@@ -122,6 +129,7 @@ let apply_action (state: round_state) (player : Player.t) (act : Card.action) :
           current_bet = new_high_bet;
           pot = state.pot + cost;
           contributions = update_contribution state player cost;
+          table = Table.advance_turn state.table;
           to_act = remove_from_to_act (Table.current_players state.table) player
         }
       

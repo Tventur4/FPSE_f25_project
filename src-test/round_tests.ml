@@ -44,4 +44,5 @@ let test_apply_action_raise _ =
 let series =
   "round_tests" >:::
   [ "apply_action_check" >:: test_apply_action_check
-  ; "apply_action_bet_calls" >:: test_apply_action_bet_calls]
+  ; "apply_action_bet_calls" >:: test_apply_action_bet_calls
+  ; "apply_action_raise" >:: test_apply_action_raise]
