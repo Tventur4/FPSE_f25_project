@@ -23,7 +23,7 @@ let rec betting_loop (game : Game.t) : Game.t =
         
         (*obtain data needed for the bot to make a move*)
         let stage = game.current_round.stage in
-        let current_bet = game.current_Round.current_bet in
+        let current_bet = game.current_round.current_bet in
         let community_cards = game.community_cards in
         let num_players = List.length (Table.get_active_players game.table) in
         let hole = Option.value_exn player.hole_cards in
@@ -42,7 +42,7 @@ let rec betting_loop (game : Game.t) : Game.t =
           game with current_round = new_round_state;
           pot = new_round_state.pot
         } in
-        let action_str = Sexp.to_string (Card.sex_of_action action) in
+        let action_str = Sexp.to_string (Card.sexp_of_action action) in
         print_endline (Printf.sprintf "\n %s perforsm %s\n" player.name action_str);
 
         betting_loop new_game
@@ -55,7 +55,8 @@ let rec game_loop (game : Game.t) : unit =
     (*map all the players and find out their best hand rank with Card_set.of_7_cards*)
     let results = List.map active_players ~f:(fun p -> 
       let hole1, hole2 = Option.value_exn p.hole_cards in
-      let best_hand = Card_set.of_7_cards (hole_1 :: hole_2 :: game.community_cards) in
+      (*combine hole cards and community cards to feed into best hand of 5 that can be made*)
+      let best_hand = Card_set.of_7_cards (hole1 :: hole2 :: game.community_cards) in
       (p, best_hand)
       ) in
     
@@ -73,7 +74,13 @@ let rec game_loop (game : Game.t) : unit =
     (* ask if player wants to play again*)
     if Interface.prompt_play_again () then
       let winner_updated = Player.add_chips winner game.pot in
-      let new_table = Table.init (Table.current_players game.table) in
+
+      (*create new player list with the updated winner*)
+      let current_players = Table.current_players game.table in
+      let next_players = List.map current_players ~f:(fun p ->
+        if p.player_id = winner.player_id then winner_updated else p 
+      ) in
+      let new_table = Table.init next_players in
       let new_game = Game.init_game new_table in
       game_loop new_game
     else

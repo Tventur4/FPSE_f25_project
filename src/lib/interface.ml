@@ -78,12 +78,12 @@ let display_showdown (game : Game.t) (results : (Player.t * string) list) : unit
       | None -> "[NA]"
     in
     printf "%s shows: %s (Hand: %s)\n" p.name cards_str hand_desc
-    );
+    )
 (*given a winner and an amount (calculated from the pot) output the winner and the amount they've won*)
 let announce_winner (winner : Player.t) (amount : int) : unit =
   printf "%s wins $%d.\n" winner.name amount;
   print_endline "[Chip Counts]";
-  printf "%s: $%d\n" winner.name (winner.chip_stack + amount);
+  printf "%s: $%d\n" winner.name (winner.chip_stack + amount)
 
 (*end of Display functions*)
 
@@ -148,8 +148,9 @@ let rec prompt_for_action (game : Game.t) : Card.action =
       let is_raise = List.mem ["r"; "raise"] cmd ~equal:String.equal in
 
       if is_bet || is_raise then
+        let lower_arg = Stdlib.String.lowercase_ascii args in
         let amount =
-          if String.lowercase args = "pot" || String.lowercase args = "p" then game.pot
+          if String.equal lower_arg "pot" || String.equal lower_arg "p" then game.pot
           else Option.value (int_of_string_opt args) ~default:0
         in
         if amount <= 0 then (print_endline "Invalid amount."; prompt_for_action game)
