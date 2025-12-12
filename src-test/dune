@@ -1,9 +1,20 @@
+(library
+ (name cards_tests)
+ (modules cards_tests)
+ (libraries
+  ounit2
+  core
+  card
+  card_set
+  deck))
+
 (test
  (name tests)
  (modules tests)
  (libraries
   ounit2
   core
+  cards_tests
   bot_best_hand
   bot_hand_only
   bot
