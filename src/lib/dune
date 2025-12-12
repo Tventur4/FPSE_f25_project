@@ -36,14 +36,14 @@
 (library
  (name bot)
  (modules bot)
- (libraries core card card_set)
+ (libraries core card deck card_set)
  (preprocess
  (pps ppx_jane)))
 
 (library
  (name interface)
  (modules interface)
- (libraries core card player game)
+ (libraries core card player round game)
  (preprocess
  (pps ppx_jane)))
 

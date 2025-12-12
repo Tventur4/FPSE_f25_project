@@ -5,7 +5,7 @@ open Core
 
 type hand = Card.t list [@@deriving sexp]
 
-type player_type = Human | Bot of Bot.t
+type player_type = Human | Bot of Bot.t [@@deriving sexp]
 
 type t =
   { name : string

@@ -13,7 +13,7 @@ let display_game_state (game : Game.t) : unit =
 
   (* print headers for each new stage declaration*)
   let stage_name = 
-    Round.sexp_of_betting_round game.current_round.stage
+    Card.sexp_of_betting_round game.current_round.stage
     |> Sexp.to_string
     |> String.uppercase
 
@@ -23,7 +23,7 @@ let display_game_state (game : Game.t) : unit =
   (*If the current round isn't in the preflop,
   iterate through the list and display all the community cards*)
   match game.current_round.stage with
-  | Round.PreFlop -> ()
+  | Card.PreFlop -> ()
   | _ -> 
     printf "Pot: $%d\n" game.pot;
     print_string "Community Cards: [";

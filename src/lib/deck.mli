@@ -4,7 +4,7 @@
 *)
 
 
-type t (*= C.t list [@@deriving sexp] *)
+type t [@@deriving sexp](*= C.t list [@@deriving sexp] *)
 
 (** [t] is a serializable type to represent a deck of playing cards.
     Note that the "top" of the deck refers to the card at index 0. *)

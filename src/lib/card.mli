@@ -3,7 +3,7 @@
   The type holds a suit and a rank, both of which are variants defined below.
 *)
 
-type suit = Clubs | Diamonds | Hearts | Spades [@@deriving sexp, compare, equal]
+type suit = Clubs | Diamonds | Hearts | Spades [@@deriving sexp, compare, equal, variants, enumerate]
 (** [suit] is a comparable, serializable type to represent the suit attribute of a playing card. 
     Comparison is alphabetical on the string representation of the suit. *)
 

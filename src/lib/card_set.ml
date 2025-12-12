@@ -1,5 +1,7 @@
 open Core
 
+[@@@ocaml.warning "-27"]
+
 type hand_category =
   | HighCard
   | Pair

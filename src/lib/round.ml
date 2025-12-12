@@ -51,7 +51,7 @@ let is_over (state: round_state) : bool =
   | [] -> true
   | _ -> false
 
-let apply_action (state: round_state) (player : Player.t) (act : action) :
+let apply_action (state: round_state) (player : Player.t) (act : Card.action) :
 (round_state, string) result = 
   match state.to_act with
   | [] -> Error "No Players left to act. Round is over"
