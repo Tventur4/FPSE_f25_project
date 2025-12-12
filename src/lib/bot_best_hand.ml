@@ -4,18 +4,30 @@
 
 open Core
 
-let shuffle (list : 'a list) : 'a list =
+let sorted_deck : Card.t list =
+  let suits = [Card.Spades; Card.Hearts; Card.Diamonds; Card.Clubs] in
+  let ranks =
+    [ Card.Two; Card.Three; Card.Four; Card.Five; Card.Six; Card.Seven
+    ; Card.Eight; Card.Nine; Card.Ten; Card.Jack; Card.Queen; Card.King
+    ; Card.Ace ]
+  in
+  List.concat_map suits ~f:(fun suit ->
+      List.map ranks ~f:(fun rank -> {Card.suit; rank}))
+
+let shuffle (list : Card.t list) : Card.t list =
   List.permute list
 
-let rec take (n : int) = function
+let rec take (n : int) (cards : Card.t list) : Card.t list =
+  match cards with
   | [] -> []
   | hd :: tl -> if n = 0 then [] else hd :: take (n - 1) tl
 
-let rec drop (n : int) = function
+let rec drop (n : int) (cards : Card.t list) : Card.t list =
+  match cards with
   | [] -> []
   | hd :: tl -> if n = 0 then tl else drop (n - 1) tl
 
-let rec deal_opponents n deck acc =
+let rec deal_opponents (n : int) (deck : Card.t list) (acc : (Card.t * Card.t) list) : (Card.t * Card.t) list * Card.t list =
   match n, deck with
   | 0, _ -> (List.rev acc, deck)
   | _, c1 :: c2 :: rest -> deal_opponents (n - 1) rest ((c1, c2) :: acc)
@@ -67,16 +79,6 @@ let rec monte_carlo_simulate (k : int) (community_cards : Card.t list) (num_play
 
     monte_carlo_simulate (k - 1) community_cards num_players hole_cards deck wins' ties'
 
-let sorted_deck : Card.t list =
-  let suits = [Card.Spades; Card.Hearts; Card.Diamonds; Card.Clubs] in
-  let ranks =
-    [ Card.Two; Card.Three; Card.Four; Card.Five; Card.Six; Card.Seven
-    ; Card.Eight; Card.Nine; Card.Ten; Card.Jack; Card.Queen; Card.King
-    ; Card.Ace ]
-  in
-  List.concat_map suits ~f:(fun suit ->
-      List.map ranks ~f:(fun rank -> {Card.suit; rank}))
-
 let estimate_win_probability (community_cards : Card.t list) (num_players : int) (hole_cards : (Card.t * Card.t)) (num_samples : int) : float =
   let (h1, h2) = hole_cards in
   let used = h1 :: h2 :: community_cards in
@@ -84,22 +86,31 @@ let estimate_win_probability (community_cards : Card.t list) (num_players : int)
   let wins, ties = monte_carlo_simulate num_samples community_cards num_players hole_cards deck 0 0 in
   (float wins +. 0.5 *. float ties) /. float num_samples
 
-let rule_best_hand_move (stage : Card.betting_round) (community_cards : Card.t list) (num_players : int) (cards : (Card.t * Card.t)) (chips : int) : Card.action =
+let get_p_bracket (diff_index : int) (stage : Card.betting_round) (p : float) : int =
+  let l_base, m_base, u_base =
+    match stage with
+    | PreFlop -> 0.2, 0.4, 0.6
+    | Flop -> 0.15, 0.35, 0.55
+    | Turn -> 0.1, 0.3, 0.55
+    | River -> 0.1, 0.3, 0.5
+    | _ -> 1.0, 1.0, 1.0
+  in
+  let lower_threshold, mid_threshold, upper_threshold =
+    match diff_index with
+    | 0 -> l_base, m_base, u_base
+    | 1 -> l_base, m_base, u_base +. 0.5
+    | 2 -> l_base, m_base +. 0.5, u_base +. 0.1
+    | 3 -> l_base +. 0.5, m_base +. 0.5, u_base +. 0.15
+    | _ -> 1.0, 1.0, 1.0
+  in
+  if (Float.compare p lower_threshold < 0) 
+    then 0 
+  else if (Float.compare p mid_threshold < 0) 
+    then 1 
+  else if (Float.compare p upper_threshold < 0) 
+    then 2 
+  else 3
+
+let get_bracket_best_hand (diff_index : int) (stage : Card.betting_round) (community_cards : Card.t list) (num_players : int) (cards : (Card.t * Card.t)) : int =
   let p = estimate_win_probability community_cards num_players cards 300 in
-  match stage with
-  | PreFlop ->
-    if Float.compare p 0.4 < 0 then Fold
-    else if Float.compare p 0.6 < 0 then Call
-    else Bet (chips / 10)
-  | Flop ->
-    if Float.compare p 0.35 < 0 then Fold
-    else if  Float.compare p 0.55 < 0 then Call
-    else Bet (chips / 10)
-  | Turn ->
-    if Float.compare p 0.3 < 0 then Fold
-    else if Float.compare p 0.55 < 0 then Call
-    else Bet (chips / 10)
-  | River ->
-    if Float.compare p 0.5 < 0 then Fold
-    else Bet (chips / 5)
-  | _ -> Fold
+  get_p_bracket diff_index stage p

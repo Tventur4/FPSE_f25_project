@@ -2,7 +2,7 @@
   The Bot module defines an abstract type representing an driving algorithm and behavior of a computer player in a game of poker.
 *)
 
-type difficulty = Easy | Medium | Hard [@@deriving sexp]
+type difficulty = Easy | Medium | Hard | Expert [@@deriving sexp]
 (** [difficulty] determines the relative difficulty of the bot. *)
 
 type bot_type = Always_fold | All_in | Rule_hand_only | Rule_best_hand [@@deriving sexp]
