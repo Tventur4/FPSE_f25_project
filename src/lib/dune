@@ -27,13 +27,6 @@
  (pps ppx_jane)))
 
 (library
- (name game)
- (modules game)
- (libraries core card deck table round)
- (preprocess
- (pps ppx_jane)))
-
-(library
  (name bot_hand_only)
  (modules bot_hand_only)
  (libraries core card deck card_set)
@@ -64,6 +57,13 @@
 (library
  (name round)
  (modules round)
- (libraries core card player) ; Todo: add other dependencies
+ (libraries core card player table)
+ (preprocess
+ (pps ppx_jane)))
+
+(library
+ (name game)
+ (modules game)
+ (libraries core card deck table round)
  (preprocess
  (pps ppx_jane)))

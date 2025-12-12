@@ -10,7 +10,7 @@ type t =
 
 let init_game (table : Table.t) : t =
   let deck = Deck.sorted_deck |> Deck.shuffle in
-  let round_state = Round.init (Table.current_players table) in
+  let round_state = Round.init table in
   { table
   ; deck
   ; community_cards = []
@@ -83,7 +83,7 @@ let next_street (game : t) : t =
       (* rotate dealer, reset community, start new round with fresh shuffled deck *)
       let rotated_table = Table.rotate game.table in
       let fresh_deck = Deck.sorted_deck |> Deck.shuffle in
-      let new_round = Round.init (Table.current_players rotated_table) in
+      let new_round = Round.init rotated_table in
       { table = rotated_table
       ; deck = fresh_deck
       ; community_cards = []

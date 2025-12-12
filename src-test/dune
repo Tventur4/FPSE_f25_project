@@ -29,6 +29,7 @@
     card
     bot 
     player
+    table
     round))
 
 (test

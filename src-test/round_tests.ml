@@ -9,7 +9,7 @@ let player_vrinda = Player.make_player "Vrinda" 1 None 100
 let player_timmy = Player.make_player "Timmy" 2 None 100
 let players = [player_tobi ; player_vrinda ; player_timmy]
 
-let round = Round.init players
+let round = Round.init (Table.init players)
 
 let get_from_result (x : ('a, 'b) result) : 'a =
   match x with

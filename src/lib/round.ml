@@ -7,6 +7,7 @@ type round_state = {
   stage : Card.betting_round;
   pot : int;
   current_bet : int;
+  table : Table.t;
   to_act : Player.t list;
   folded : Player.t list;
   contributions : (int * int) list
@@ -34,12 +35,13 @@ let get_all_active_players (state : round_state) (current_actor : Player.t) : Pl
 (*initial round to Preflop, 0's for current bet and pot and an empty list for folded and contributions. 
 The players to act is the initial players list. 
 *)
-let init (players : Player.t list) : round_state =
+let init (table : Table.t) : round_state =
   {
     stage = PreFlop;
     pot = 0;
     current_bet = 0;
-    to_act = players;
+    table = table;
+    to_act = Table.current_players table;
     folded = [];
     contributions = [];
 }
@@ -103,7 +105,7 @@ let apply_action (state: round_state) (player : Player.t) (act : Card.action) :
           current_bet = amount;
           pot = state.pot + amount;
           contributions = update_contribution state player amount;
-          to_act = remove_from_to_act state.to_act player
+          to_act = remove_from_to_act (Table.current_players state.table) player
         }
     | Raise amount -> 
       (* let total_wager = current_contrib + amount in *)
@@ -120,6 +122,6 @@ let apply_action (state: round_state) (player : Player.t) (act : Card.action) :
           current_bet = new_high_bet;
           pot = state.pot + cost;
           contributions = update_contribution state player cost;
-          to_act = remove_from_to_act state.to_act player
+          to_act = remove_from_to_act (Table.current_players state.table) player
         }
       
