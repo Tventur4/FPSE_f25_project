@@ -50,11 +50,12 @@ let determine_move_rule_bots (diff_index : int) (bracket : int) (stage : Card.be
   else let bet_made = (current_bet <> 0) in
   let call_t1, call_t2 = get_call_thresholds diff_index in
   let bet_a1, bet_a2, bet_a3, bet_a4 = get_bet_amounts diff_index in
+  let make_bet = Random.bool () in
   match bracket, stage, bet_made with
   | 0, _, _ -> Fold
   | 1, _, false -> Check
   | 1, _, true -> Fold 
-  | 2, _, false -> Check
+  | 2, _, false -> if make_bet then Bet (chips / bet_a1) else Check
   | 2, _, true -> if current_bet < (chips / call_t1) then Call else Fold
   | 3, PreFlop, false -> Bet (chips / bet_a1)
   | 3, Flop, false -> Bet (chips / bet_a2)

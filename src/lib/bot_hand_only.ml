@@ -1,7 +1,3 @@
-(* Disables "unused variable" warning from dune while you're still solving these! *)
-[@@@ocaml.warning "-27"]
-[@@@ocaml.warning "-33"]
-
 open Core
 
 let list_max (lst : 'a list) (default_val : 'a) : 'a =
@@ -28,8 +24,7 @@ let evaluate_hole_cards (cards : Card.t * Card.t) : int =
     then 2
   else if pair_of Seven || pair_of Six || pair_of Five || pair_of Four || pair_of Three || pair_of Two || (Card.equal_rank high King && suited && Card.compare_rank low Ten >= 0) || (Card.equal_rank high Queen && suited && Card.equal_rank low Jack)
     then 1
-  else
-    0
+  else 0
 
 let evaluate_hand (diff_index : int) (stage : Card.betting_round) (community_cards : Card.t list) (cards : Card.t * Card.t) : int =
   let (c1, c2) = cards in
@@ -39,10 +34,10 @@ let evaluate_hand (diff_index : int) (stage : Card.betting_round) (community_car
   let hand_value = list_max hand_values 0 in
   let lower_threshold, mid_threshold, upper_threshold =
     match diff_index with
-    | 0 -> 1, 2, 3
-    | 1 -> 1, 2, 4
-    | 2 -> 1, 3, 4
-    | 3 -> 2, 3, 5
+    | 0 -> 0, 1, 2
+    | 1 -> 0, 1, 3
+    | 2 -> 0, 2, 3
+    | 3 -> 0, 2, 4
     | _ -> 10, 10, 10
   in
   if (hand_value > upper_threshold)

@@ -3,7 +3,7 @@
   This bot decides a move based solely off of their own cards and does not consider the cards of the other players.
 *)
 
-val evaluate_hold_cards : Card.t * Card.t -> int
+val evaluate_hole_cards : (Card.t * Card.t) -> int
 (** [evaluate_hold_cards cards] is a bracket index for the bot determined based on their hole cards [cards]. See 
     [get_bracket_hand_only] for more information on the bracket index. *)
 

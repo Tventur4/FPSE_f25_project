@@ -89,10 +89,10 @@ let estimate_win_probability (community_cards : Card.t list) (num_players : int)
 let get_p_bracket (diff_index : int) (stage : Card.betting_round) (p : float) : int =
   let l_base, m_base, u_base =
     match stage with
-    | PreFlop -> 0.2, 0.4, 0.6
-    | Flop -> 0.15, 0.35, 0.55
-    | Turn -> 0.1, 0.3, 0.55
-    | River -> 0.1, 0.3, 0.5
+    | PreFlop -> 0.15, 0.35, 0.6
+    | Flop -> 0.1, 0.25, 0.5
+    | Turn -> 0.05, 0.2, 0.4
+    | River -> 0.05, 0.15, 0.3
     | _ -> 1.0, 1.0, 1.0
   in
   let lower_threshold, mid_threshold, upper_threshold =
@@ -100,7 +100,7 @@ let get_p_bracket (diff_index : int) (stage : Card.betting_round) (p : float) : 
     | 0 -> l_base, m_base, u_base
     | 1 -> l_base, m_base, u_base +. 0.5
     | 2 -> l_base, m_base +. 0.5, u_base +. 0.1
-    | 3 -> l_base +. 0.5, m_base +. 0.5, u_base +. 0.10
+    | 3 -> l_base +. 0.5, m_base +. 0.5, u_base +. 0.1
     | _ -> 1.0, 1.0, 1.0
   in
   if (Float.compare p lower_threshold < 0) 
@@ -113,19 +113,19 @@ let get_p_bracket (diff_index : int) (stage : Card.betting_round) (p : float) : 
 
 let get_num_samples (diff_index : int) (stage : Card.betting_round) : int =
   match diff_index, stage with
-  | 0, _ -> 250
-  | 1, PreFlop -> 250
-  | 1, Flop -> 500
-  | 1, Turn -> 500
-  | 1, River -> 500
-  | 2, PreFlop -> 500
-  | 2, Flop -> 1000
-  | 2, Turn -> 1000
-  | 2, River -> 2000
-  | 3, PreFlop -> 1000
-  | 3, Flop -> 1000
-  | 3, Turn -> 2000
-  | 3, River -> 2000
+  | 0, _ -> 500
+  | 1, PreFlop -> 500
+  | 1, Flop -> 1000
+  | 1, Turn -> 1000
+  | 1, River -> 2000
+  | 2, PreFlop -> 1000
+  | 2, Flop -> 2000
+  | 2, Turn -> 3000
+  | 2, River -> 4000
+  | 3, PreFlop -> 2000
+  | 3, Flop -> 4000
+  | 3, Turn -> 5000
+  | 3, River -> 5000
   | _, _ -> 0
 
 let get_bracket_best_hand (diff_index : int) (stage : Card.betting_round) (community_cards : Card.t list) (num_players : int) (cards : (Card.t * Card.t)) : int =
