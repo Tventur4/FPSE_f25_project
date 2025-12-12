@@ -29,6 +29,15 @@ let update_contribution (state : round_state) (player : Player.t) (added_amount 
 let remove_from_to_act (players : Player.t list) (player : Player.t) : Player.t list = 
   List.filter players ~f:(fun p -> p.player_id <> player.player_id)
 
+(* Update player's chip stack in the table *)
+let update_player_chips (table : Table.t) (player : Player.t) (new_chips : Chips.t) : Table.t =
+  let updated_player = { player with chip_stack = new_chips } in
+  let current_players = Table.current_players table in
+  let new_players = List.map current_players ~f:(fun p ->
+    if p.player_id = player.player_id then updated_player else p
+  ) in
+  Table.update_players table new_players
+
 let get_all_active_players (state : round_state) (current_actor : Player.t) : Player.t list = 
   state.to_act
 
@@ -86,37 +95,47 @@ let apply_action (state: round_state) (player : Player.t) (act : Card.action) :
       | Ok amount_needed ->
         (*subject to change for now but if they don't have enough chips to call just assume ALL-IN*)
         if Chips.(amount_needed > player.chip_stack) then
-          Ok {
-            state with
-              pot = Chips.add state.pot player.chip_stack;
-              contributions = update_contribution state player player.chip_stack;
-              to_act = remove_from_to_act state.to_act player;
-              table = Table.advance_turn state.table
-          }
+          (match Player.remove_chips player player.chip_stack with
+          | Error _ -> Error "Failed to remove chips"
+          | Ok updated_player ->
+            let new_table = update_player_chips state.table player updated_player.chip_stack in
+            Ok {
+              state with
+                pot = Chips.add state.pot player.chip_stack;
+                contributions = update_contribution state player player.chip_stack;
+                to_act = remove_from_to_act state.to_act player;
+                table = Table.advance_turn new_table
+            })
         else
-          Ok {
-            state with
-              pot = Chips.add state.pot amount_needed;
-              contributions = update_contribution state player amount_needed;
-              to_act = remove_from_to_act state.to_act player;
-              table = Table.advance_turn state.table
-          })
+          (match Player.remove_chips player amount_needed with
+          | Error _ -> Error "Failed to remove chips"
+          | Ok updated_player ->
+            let new_table = update_player_chips state.table player updated_player.chip_stack in
+            Ok {
+              state with
+                pot = Chips.add state.pot amount_needed;
+                contributions = update_contribution state player amount_needed;
+                to_act = remove_from_to_act state.to_act player;
+                table = Table.advance_turn new_table
+            }))
     | Bet amount ->
       if Chips.(state.current_bet > Chips.zero) then
         Error "Cannot Bet: There is already a wager. You must Raise."
       else if Chips.(amount > player.chip_stack) then
         Error "Not enough chips to bet that amount"
       else
-        (*might need to revisit here, need to make sure every other active player has a chance
-        to call the new current-bet.*)
-        Ok {
-          state with
-          current_bet = amount;
-          pot = Chips.add state.pot amount;
-          contributions = update_contribution state player amount;
-          table = Table.advance_turn state.table;
-          to_act = remove_from_to_act (Table.get_active_players state.table) player
-        }
+        (match Player.remove_chips player amount with
+        | Error _ -> Error "Failed to remove chips"
+        | Ok updated_player ->
+          let new_table = update_player_chips state.table player updated_player.chip_stack in
+          Ok {
+            state with
+              current_bet = amount;
+              pot = Chips.add state.pot amount;
+              contributions = update_contribution state player amount;
+              table = Table.advance_turn new_table;
+              to_act = remove_from_to_act (Table.get_active_players new_table) player
+            })
     | Raise amount -> 
       (* let total_wager = current_contrib + amount in *)
       let new_high_bet = Chips.add state.current_bet amount in
@@ -126,16 +145,18 @@ let apply_action (state: round_state) (player : Player.t) (act : Card.action) :
         if Chips.(cost > player.chip_stack) then
           Error "Not enough chips to raise"
         else
-          (*Game would have to work on refilling Round.to_act with all the active_players minus this player
-          to ensure everybody besides this player acts again*)
-          Ok {
-            state with 
-            current_bet = new_high_bet;
-            pot = Chips.add state.pot cost;
-            contributions = update_contribution state player cost;
-            table = Table.advance_turn state.table;
-            to_act = remove_from_to_act (Table.get_active_players state.table) player
-          })
+          (match Player.remove_chips player cost with
+          | Error _ -> Error "Failed to remove chips"
+          | Ok updated_player ->
+            let new_table = update_player_chips state.table player updated_player.chip_stack in
+            Ok {
+              state with 
+              current_bet = new_high_bet;
+              pot = Chips.add state.pot cost;
+              contributions = update_contribution state player cost;
+              table = Table.advance_turn new_table;
+              to_act = remove_from_to_act (Table.get_active_players new_table) player
+            }))
       
 let reset_for_next_stage (state : round_state) (new_stage : Card.betting_round) : round_state =
   {

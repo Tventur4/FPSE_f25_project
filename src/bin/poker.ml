@@ -35,19 +35,11 @@ let rec betting_loop (game : Game.t) : Game.t =
         print_endline (Printf.sprintf "\nERROR: %s\n" msg);
         betting_loop game (* try the same round again *)
       | Ok new_round_state ->
-        (* allows for contributions to effect the chips of the players *)
-        let current_players = Table.current_players game.table in
-        let next_players = List.map current_players ~f:(fun p ->
-          let old_stack = p.chip_stack in
-          let x = Round.get_contribution round_state p in
-          {p with chip_stack = match  Chips.subtract old_stack x with
-          | Ok new_stack -> new_stack
-          | Error msg -> raise (Failure msg)}
-        ) in
         let new_game = {
-          game with current_round = new_round_state;
+          game with 
+          current_round = new_round_state;
           pot = new_round_state.pot;
-          table = Table.update_players new_round_state.table next_players
+          table = new_round_state.table
         } in
         let action_str = Sexp.to_string (Card.sexp_of_action action) in
         print_endline (Printf.sprintf "\n %s performs %s\n" player.name action_str);
