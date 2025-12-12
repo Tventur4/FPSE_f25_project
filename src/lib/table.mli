@@ -36,6 +36,9 @@ val advance_turn : t -> t
 (*marks player p as folded in the table*)
 val fold_player : t -> Player.t -> t
 
+(** Updates the players in the table. *)
+val update_players : t -> Player.t list -> t
+
 (* val create : Player.t list -> table
 (** Create a table with players in given seating order; dealer starts at index 0. *)
 

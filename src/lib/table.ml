@@ -85,3 +85,5 @@ let fold_player (t: t) (p : Player.t) : t =
     else player
   ) in
   {t with players = new_players}
+
+let update_players (t : t) (next_players : Player.t list) : t = {t with players = next_players}
