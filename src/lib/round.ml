@@ -17,8 +17,8 @@ type round_state = {
 (*TODO: Are you building? List.ASsoc is a typo. Also, why an association list instead of a map? I know that at a certain size, a list is faster than a tree map, but it's more idiomatic to use a map when performance is not a concern (and I don't think it's a concern here).*)
 let get_contribution (state : round_state) (player : Player.t) : int =
   match List.Assoc.find state.contributions player.player_id ~equal:Int.equal with
-  | Some amount -> amount
-  | None -> 0
+    | Some amount -> amount
+    | None -> 0
 
 (*update a player's contribution in the list*)
 let update_contribution (state : round_state) (player : Player.t) (added_amount : int) =
