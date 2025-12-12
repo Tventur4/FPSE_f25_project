@@ -137,4 +137,27 @@ let rec prompt_for_action (game : Game.t) : Card.action =
   (*keep on recursing, if no input is given*)
   | None -> prompt_for_action game
   | Some input ->
-    let parts = String.split
+    let parts = String.split ~on: ' ' (String.strip input) in
+    match parts with
+    (* different actions a player can make*)
+    | ["f"] | ["fold"] -> Round.Fold
+    | ["c"] | ["check"] | ["call"] ->
+      if current_bet = 0 then Round.Check else Round.Call
+    | cmd :: args :: _ ->
+      let is_bet = List.mem ["b"; "bet"] cmd ~equal:String.equal in
+      let is_raise = List.mem ["r"; "raise"] cmd ~equal:String.equal in
+
+      if is_bet || is_raise then
+        let amount =
+          if String.lowercase arg = "pot" || String.lowercase arg = "p" then game.pot
+          else Option.value (int_of_string_opt arg) ~default:0
+        in
+        if amount <= 0 then (print_endline "Invalid amount."; prompt_for_action game)
+        else if is_bet then Round.Bet amount
+        else Round.Raise amount
+      else
+        (print_endline "Invalid command."; prompt_for_action game)
+      
+      | _ ->
+        print_endline "Invalid command. Try 'c', 'f', 'b 50', or 'r pot'.";
+        prompt_for_action game
