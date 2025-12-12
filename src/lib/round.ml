@@ -64,12 +64,13 @@ let apply_action (state: round_state) (player : Player.t) (act : Card.action) :
     (*if the player is valid, calculate costs of the action (fold, check, call, bet, raise)*)
     let current_contrib = get_contribution state player in
     match act with
-    | Fold -> 
+    | Fold ->
+      let new_table = Table.fold_player state.table player in 
       Ok {
         state with
           folded = player :: state.folded; 
           to_act = remove_from_to_act state.to_act player;
-          table = Table.advance_turn state.table
+          table = Table.advance_turn new_table
       }
     | Check -> 
       if current_contrib < state.current_bet then
@@ -136,6 +137,7 @@ let apply_action (state: round_state) (player : Player.t) (act : Card.action) :
 let reset_for_next_stage (state : round_state) (new_stage : Card.betting_round) : round_state =
   {
     state with
+    stage = new_stage;
     current_bet = 0; (* reset betting requirements *)
     contributions = []; (*clear player contributions for the new street*)
     to_act = Table.get_active_players state.table;
