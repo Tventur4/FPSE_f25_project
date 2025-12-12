@@ -12,6 +12,31 @@ type t =
 let draw_n_cards deck n =
   Deck.draw_cards deck n
 
+(* running into bugs where cards are still being dealt
+to only one person when everybody else has folded
+delegate a winner when everyone else has folded.
+*)
+let check_winner_by_fold (game : t) : Player.t option =
+  match Table.get_active_players game.table with
+  | [winner] -> Some winner
+  | _ -> None
+
+(* this should be the thing driving the game loop,
+need to sync table from round to table in game.
+*)
+let process_turn (game : t) (act : Card.action) : (t, string) result =
+  let current_player = Table.get_player_at_turn game.table in
+  match Round.apply_action game.current_round current_player act with
+  | Error e -> Error each
+  | Okay updated_round_state ->
+    let new_table = updated_round_state.table in
+    Ok {
+      game with
+      current_round = updated_round_state;
+      table = new_table;
+      pot = updated_round_state.pot
+    }
+
 let init_game (table : Table.t) : t =
   let deck = Deck.sorted_deck |> Deck.shuffle in
   let players = Table.current_players table in
@@ -37,18 +62,6 @@ let init_game (table : Table.t) : t =
 
 let current_round (g : t) : Card.betting_round =
   g.current_round.stage
-
-(* let advance_round (rs : Round.round_state) : Round.round_state =
-  let open Card in
-  let next_stage = match rs.stage with
-    | PreFlop -> Flop
-    | Flop -> Turn
-    | Turn -> River
-    | River -> Showdown
-    | Showdown -> PreFlop
-  in
-  { rs with stage = next_stage }
- *)
 
 let next_street (game : t) : t =
   let stage = game.current_round.stage in
