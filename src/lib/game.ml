@@ -27,7 +27,7 @@ let init_game (table : Table.t) : t =
   )
     in
   let table_with_cards = Table.init players_with_cards in
-  let round_state = Round.init table in
+  let round_state = Round.init table_with_cards in
   { table = table_with_cards
   ; deck = deck_after_deal
   ; community_cards = []
