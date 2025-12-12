@@ -16,6 +16,9 @@ type round_state = {
 val init : Player.t list -> round_state
 (** [init players] creates a fresh betting round with all players active. *)
 
+val get_contribution : round_state -> Player.t -> int
+(** FILL THIS IN *)
+
 val apply_action :
   round_state -> Player.t -> Card.action -> (round_state, string) result
 (** Applies a player's action and returns updated round state. *)

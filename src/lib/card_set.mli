@@ -6,8 +6,10 @@
 type t [@@deriving sexp]
 
 val evaluate : Card.t list -> t
+(** FILL THIS IN *)
 
 val choose_sublists : int -> 'a list -> 'a list list
+(** FILL THIS IN *)
 
 (* returns best possible 5-card hand constructed from 7 available hands. takes two hole cards and
 community cards as parameters*)

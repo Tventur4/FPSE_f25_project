@@ -114,7 +114,6 @@ let prompt_for_setup () : (string * int) =
   (*return a tuple of name and num_bots*)
   (name, num_bots)
 
-
 let prompt_play_again () : bool =
   print_string "Play another hand? ([y]es, [n]o)\n> ";
   Out_channel.flush stdout;

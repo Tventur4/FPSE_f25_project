@@ -34,9 +34,23 @@
  (pps ppx_jane)))
 
 (library
+ (name bot_hand_only)
+ (modules bot_hand_only)
+ (libraries core card deck card_set)
+ (preprocess
+ (pps ppx_jane)))
+
+(library
+ (name bot_best_hand)
+ (modules bot_best_hand)
+ (libraries core card deck card_set)
+ (preprocess
+ (pps ppx_jane)))
+
+(library
  (name bot)
  (modules bot)
- (libraries core card deck card_set)
+ (libraries core card deck card_set bot_hand_only bot_best_hand)
  (preprocess
  (pps ppx_jane)))
 
