@@ -8,6 +8,18 @@
   card_set
   deck))
 
+(library
+  (name table_tests)
+  (modules table_tests)
+  (libraries
+    ounit2
+    core
+    card
+    deck
+    bot
+    player
+    table))
+
 (test
  (name tests)
  (modules tests)
@@ -15,12 +27,12 @@
   ounit2
   core
   cards_tests
+  table_tests
   bot_best_hand
   bot_hand_only
   bot
   card_set
   card
-  interface
   deck
   game
   player

@@ -1,0 +1,6 @@
+(library
+ (name interface)
+ (modules interface)
+ (libraries core card player round game)
+ (preprocess
+ (pps ppx_jane)))
