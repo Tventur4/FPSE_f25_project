@@ -47,7 +47,7 @@ let rec betting_loop (game : Game.t) : Game.t =
         let new_game = {
           game with current_round = new_round_state;
           pot = new_round_state.pot;
-          table = Table.update_players game.table next_players
+          table = Table.update_players new_round_state.table next_players
         } in
         let action_str = Sexp.to_string (Card.sexp_of_action action) in
         print_endline (Printf.sprintf "\n %s performs %s\n" player.name action_str);
