@@ -6,6 +6,13 @@
  (pps ppx_jane)))
 
 (library
+ (name chips)
+ (modules chips)
+ (libraries core)
+ (preprocess
+ (pps ppx_jane)))
+
+(library
  (name deck)
  (modules deck)
  (libraries core card)
