@@ -34,10 +34,10 @@ let evaluate_hand (diff_index : int) (stage : Card.betting_round) (community_car
   let hand_value = list_max hand_values 0 in
   let lower_threshold, mid_threshold, upper_threshold =
     match diff_index with
-    | 0 -> 0, 1, 2
-    | 1 -> 0, 1, 3
-    | 2 -> 0, 2, 3
-    | 3 -> 0, 2, 4
+    | 0 -> 1, 2, 3
+    | 1 -> 1, 2, 4
+    | 2 -> 1, 3, 4
+    | 3 -> 2, 3, 5
     | _ -> 10, 10, 10
   in
   if (hand_value > upper_threshold)

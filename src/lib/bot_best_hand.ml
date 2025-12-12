@@ -39,22 +39,20 @@ let handle_option (o : 'a option) =
   | None -> failwith "value not found"
 
 let rec monte_carlo_simulate (k : int) (community_cards : Card.t list) (num_players : int) (hole_cards : (Card.t * Card.t)) (deck : Card.t list) (wins : int) (ties : int) : int * int =
-  if k = 0 then (wins, ties)
+  if k = 0 then (wins, ties) (* base case *)
   else
     let shuffled = shuffle deck in
     let missing = max 0 (5 - List.length community_cards) in
     let new_board = take missing shuffled in
     let rest = drop missing shuffled in
-    
     let full_board = community_cards @ new_board in
 
     let num_opponents = num_players - 1 in
-
     let opp_holes, rest2 = deal_opponents num_opponents rest [] in
-
     let (h1, h2) = hole_cards in
     let hero_hand = Card_set.of_7_cards (h1 :: h2 :: full_board) in
 
+    (* find best hand amongst simulated opponents *)
     let opp_best =
       match opp_holes with
       | [] -> None
@@ -67,6 +65,7 @@ let rec monte_carlo_simulate (k : int) (community_cards : Card.t list) (num_play
         Some (List.fold ~f:(fun best x -> if Card_set.compare x best > 0 then x else best) ~init:(handle_option (List.hd scores)) (handle_option (List.tl scores)))
     in
 
+    (* compare bot's best hand to the best opponent hand and update wins/ties accordingly *)
     let wins', ties' =
       match opp_best with
       | None -> (wins + 1, ties)
@@ -76,7 +75,7 @@ let rec monte_carlo_simulate (k : int) (community_cards : Card.t list) (num_play
         else if cmp = 0 then (wins, ties + 1)
         else (wins, ties)
     in
-
+    (* recurse until k = 0 *)
     monte_carlo_simulate (k - 1) community_cards num_players hole_cards deck wins' ties'
 
 let estimate_win_probability (community_cards : Card.t list) (num_players : int) (hole_cards : Card.t * Card.t) (num_samples : int) : float =
@@ -87,7 +86,7 @@ let estimate_win_probability (community_cards : Card.t list) (num_players : int)
   (float wins +. 0.5 *. float ties) /. float num_samples
 
 let get_p_bracket (diff_index : int) (stage : Card.betting_round) (p : float) : int =
-  let l_base, m_base, u_base =
+  let l_base, m_base, u_base = (* base threshold values *)
     match stage with
     | PreFlop -> 0.15, 0.35, 0.6
     | Flop -> 0.1, 0.25, 0.5
@@ -95,7 +94,7 @@ let get_p_bracket (diff_index : int) (stage : Card.betting_round) (p : float) : 
     | River -> 0.05, 0.15, 0.3
     | _ -> 1.0, 1.0, 1.0
   in
-  let lower_threshold, mid_threshold, upper_threshold =
+  let lower_threshold, mid_threshold, upper_threshold = (* threshold values adjusted according to difficulty *)
     match diff_index with
     | 0 -> l_base, m_base, u_base
     | 1 -> l_base, m_base, u_base +. 0.5

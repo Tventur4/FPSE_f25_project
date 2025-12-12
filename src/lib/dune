@@ -3,70 +3,80 @@
  (modules card)
  (libraries core chips)
  (preprocess
- (pps ppx_jane)))
+ (pps ppx_jane))
+ (instrumentation (backend bisect_ppx)))
 
 (library
  (name chips)
  (modules chips)
  (libraries core)
  (preprocess
- (pps ppx_jane)))
+ (pps ppx_jane))
+ (instrumentation (backend bisect_ppx)))
 
 (library
  (name deck)
  (modules deck)
  (libraries core card)
  (preprocess
- (pps ppx_jane)))
+ (pps ppx_jane))
+ (instrumentation (backend bisect_ppx)))
 
 (library
  (name player)
  (modules player)
  (libraries core card bot chips)
  (preprocess
- (pps ppx_jane)))
+ (pps ppx_jane))
+ (instrumentation (backend bisect_ppx)))
 
 (library
  (name card_set)
  (modules card_set)
  (libraries core card)
  (preprocess
- (pps ppx_jane)))
+ (pps ppx_jane))
+ (instrumentation (backend bisect_ppx)))
 
 (library
  (name bot_hand_only)
  (modules bot_hand_only)
  (libraries core card deck card_set)
  (preprocess
- (pps ppx_jane)))
+ (pps ppx_jane))
+ (instrumentation (backend bisect_ppx)))
 
 (library
  (name bot_best_hand)
  (modules bot_best_hand)
  (libraries core card deck card_set)
  (preprocess
- (pps ppx_jane)))
+ (pps ppx_jane))
+ (instrumentation (backend bisect_ppx)))
 
 (library
  (name bot)
  (modules bot)
  (libraries core card deck card_set bot_hand_only bot_best_hand chips)
  (preprocess
- (pps ppx_jane)))
+ (pps ppx_jane))
+ (instrumentation (backend bisect_ppx)))
 
 (library
  (name table)
  (modules table)
  (libraries core player)
  (preprocess
- (pps ppx_jane)))
+ (pps ppx_jane))
+ (instrumentation (backend bisect_ppx)))
 
 (library
  (name round)
  (modules round)
  (libraries core card player table chips)
  (preprocess
- (pps ppx_jane)))
+ (pps ppx_jane))
+ (instrumentation (backend bisect_ppx)))
 
 ; (library
 ;  (name interface)
@@ -80,12 +90,13 @@
  (modules game)
  (libraries core card deck table round chips)
  (preprocess
- (pps ppx_jane)))
+ (pps ppx_jane))
+ (instrumentation (backend bisect_ppx)))
 
 (library
  (name interface)
  (modules interface)
  (libraries core card game round player table chips)
  (preprocess
- (pps ppx_jane)
-))
+ (pps ppx_jane))
+ (instrumentation (backend bisect_ppx)))
