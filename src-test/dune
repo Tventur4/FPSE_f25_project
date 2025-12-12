@@ -54,6 +54,7 @@
   cards_tests
   table_tests
   round_tests
+  bot_tests
   bot_best_hand
   bot_hand_only
   bot
