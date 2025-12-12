@@ -100,7 +100,7 @@ let get_p_bracket (diff_index : int) (stage : Card.betting_round) (p : float) : 
     | 0 -> l_base, m_base, u_base
     | 1 -> l_base, m_base, u_base +. 0.5
     | 2 -> l_base, m_base +. 0.5, u_base +. 0.1
-    | 3 -> l_base +. 0.5, m_base +. 0.5, u_base +. 0.15
+    | 3 -> l_base +. 0.5, m_base +. 0.5, u_base +. 0.10
     | _ -> 1.0, 1.0, 1.0
   in
   if (Float.compare p lower_threshold < 0) 
@@ -111,6 +111,23 @@ let get_p_bracket (diff_index : int) (stage : Card.betting_round) (p : float) : 
     then 2 
   else 3
 
+let get_num_samples (diff_index : int) (stage : Card.betting_round) : int =
+  match diff_index, stage with
+  | 0, _ -> 250
+  | 1, PreFlop -> 250
+  | 1, Flop -> 500
+  | 1, Turn -> 500
+  | 1, River -> 500
+  | 2, PreFlop -> 500
+  | 2, Flop -> 1000
+  | 2, Turn -> 1000
+  | 2, River -> 2000
+  | 3, PreFlop -> 1000
+  | 3, Flop -> 1000
+  | 3, Turn -> 2000
+  | 3, River -> 2000
+  | _, _ -> 0
+
 let get_bracket_best_hand (diff_index : int) (stage : Card.betting_round) (community_cards : Card.t list) (num_players : int) (cards : (Card.t * Card.t)) : int =
-  let p = estimate_win_probability community_cards num_players cards 300 in
+  let p = estimate_win_probability community_cards num_players cards (get_num_samples diff_index stage) in
   get_p_bracket diff_index stage p
