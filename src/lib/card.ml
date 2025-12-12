@@ -11,7 +11,7 @@ type rank = Two | Three | Four | Five | Six | Seven | Eight | Nine | Ten | Jack 
 
 type action = Fold | Check | Call | Bet of int | Raise of int [@@deriving sexp]
     
-type betting_round = PreFlop | Flop | Turn | River | Showdown [@@deriving sexp]
+type betting_round = PreFlop | Flop | Turn | River | Showdown [@@deriving sexp, equal]
 
 type t =
   { suit : suit
