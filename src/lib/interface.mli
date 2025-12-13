@@ -5,6 +5,9 @@
 
 (*functions to print to the console*)
 
+val display_blinds_info : Game.t -> unit
+(** [display_blinds_info game] displays the dealer, small blind, big blind, and pot at the start of a hand. *)
+
 val display_game_state : Game.t -> unit
 (** [display_game_state game] prints the current public state of the game - community cards, the pot size, 
     chip counts, and the current betting round (flop, turn, etc.) *)

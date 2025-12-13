@@ -67,6 +67,9 @@ let rec game_loop (game : Game.t) : unit =
     | _ -> 
       (*otherwise move onto the next street PreFlop -> Flop ...*)
       let next_game = Game.next_street game in
+      (match Game.current_round next_game with
+      | Card.PreFlop -> Interface.display_blinds_info next_game
+      | _ -> ());
       game_loop next_game
     else
       let current_player = Table.get_player_at_turn game.table in
@@ -147,6 +150,7 @@ and handle_showdown (game : Game.t) =
       let new_table = Table.init next_players in
       let new_table_reset = Table.reset_all_folded new_table in
       let new_game = Game.init_game new_table_reset in
+      Interface.display_blinds_info new_game;
       game_loop new_game
       else 
         print_endline "Thanks for Playing OCaml Hold 'Em!"
@@ -165,6 +169,7 @@ let () =
   try 
     let table = Table.init players in
     let game = Game.init_game table in
+    Interface.display_blinds_info game;
 
     game_loop game
   with 

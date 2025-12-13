@@ -8,6 +8,23 @@ let clear_screen () =
 
 (*Display functions*)
 
+(* Display blinds information at the start of a hand *)
+let display_blinds_info (game : Game.t) : unit =
+  let players = Table.current_players game.table in
+  let num_players = List.length players in
+  if num_players >= 2 then
+    let dealer = List.nth_exn players 0 in
+    let (small_blind, big_blind) = 
+      if num_players = 2 then
+        (List.nth_exn players 0, List.nth_exn players 1)
+      else
+        (List.nth_exn players 1, List.nth_exn players 2)
+    in
+    printf "Dealer: %s\n" dealer.name;
+    printf "Small Blind: %s ($5)\n" small_blind.name;
+    printf "Big Blind: %s ($10)\n" big_blind.name;
+    printf "Pot: $%d\n\n" (Chips.to_int game.pot)
+
 let display_game_state (game : Game.t) : unit = 
   clear_screen ();
 
@@ -19,6 +36,13 @@ let display_game_state (game : Game.t) : unit =
 
   in
   printf "--- %s ---\n" stage_name;
+  
+  (* Show betting order at start of each betting round (skip if only 1 player) *)
+  let betting_order = game.current_round.to_act in
+  if List.length betting_order > 1 then
+    let order_str = List.map betting_order ~f:(fun p -> p.name)
+      |> String.concat ~sep:" → " in
+    printf "Betting Order: %s\n" order_str;
   
   (*If the current round isn't in the preflop,
   iterate through the list and display all the community cards*)
