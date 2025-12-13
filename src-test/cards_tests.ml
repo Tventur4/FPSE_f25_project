@@ -34,6 +34,13 @@ let seven_card_list3 =
   ; {Card.suit = Hearts ; rank = Seven}
   ; {Card.suit = Clubs ; rank = Seven}]
 
+let first_five_cards =
+  [ Card.int_to_card 0
+  ; Card.int_to_card 1
+  ; Card.int_to_card 2
+  ; Card.int_to_card 3
+  ; Card.int_to_card 4]
+
 let hand1 = Card_set.of_7_cards seven_card_list1
 
 let hand2 = Card_set.of_7_cards seven_card_list2
@@ -57,6 +64,10 @@ let test_int_to_card _ =
   in
   assert_equal true @@ index_matches_card 0
 
+let test_card_to_string _ =
+  assert_equal "TwoClubs" @@ Card.to_string (Card.int_to_card 0);
+  assert_equal "AceSpades" @@ Card.to_string (Card.int_to_card 51)
+
 let test_deck_num_cards _ =
   let rec correct_size_deck (index : int) (deck : Deck.t) : bool =
     let rest = Deck.burn_card deck in
@@ -65,6 +76,10 @@ let test_deck_num_cards _ =
     | x -> (Deck.num_cards deck = (52 - x)) && (correct_size_deck (index + 1) rest)
   in
   assert_equal true @@ correct_size_deck 0 deck
+
+let test_deck_draw_cards _ =
+  assert_equal (Card.int_to_card 0) @@ fst (Deck.draw_card deck);
+  assert_equal first_five_cards @@ fst (Deck.draw_cards deck 5)
 
 let test_of_7_cards _ =
   assert_equal 6 @@ Card_set.value_of_hand hand1;
@@ -80,6 +95,8 @@ let series =
   "cards_tests" >:::
   [ "card_to_int" >:: test_card_to_int
   ; "int_to_card" >:: test_int_to_card
+  ; "card_to_string" >:: test_card_to_string
   ; "deck_num_cards" >:: test_deck_num_cards
+  ; "deck_draw_cards" >:: test_deck_draw_cards
   ; "of_7_cards" >:: test_of_7_cards
   ; "compare_hands" >:: test_compare_hands]
