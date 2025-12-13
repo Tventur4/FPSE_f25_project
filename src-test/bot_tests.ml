@@ -78,6 +78,14 @@ let test_hand_only_bot_make_move _ =
   assert_equal Card.Call @@ Bot.make_move bot3 Flop (Chips.of_int 100) com_cards1 2 hole_cards4 (Chips.of_int 1000);
   assert_equal Card.Fold @@ Bot.make_move bot3 Flop (Chips.of_int 350) com_cards1 2 hole_cards4 (Chips.of_int 1000)
 
+let test_best_hand_bot_bracket _ =
+  assert_equal 3 @@ Bot_best_hand.get_bracket_best_hand 1 River com_cards6 2 hole_cards3;
+  assert_equal 0 @@ Bot_best_hand.get_bracket_best_hand 3 PreFlop [] 2 hole_cards1
+
+let test_best_hand_bot_make_move _ =
+  assert_equal (Card.Bet (Chips.of_int 500)) @@ Bot.make_move bot4 River Chips.zero com_cards6 2 hole_cards3 (Chips.of_int 1000);
+  assert_equal Card.Fold @@ Bot.make_move bot6 PreFlop Chips.zero [] 2 hole_cards1 (Chips.of_int 1000)
+
 let series =
   "bot_tests" >:::
   [ "fold_bot" >:: test_fold_bot
