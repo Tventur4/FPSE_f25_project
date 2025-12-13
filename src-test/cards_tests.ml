@@ -79,7 +79,16 @@ let test_deck_num_cards _ =
 
 let test_deck_draw_cards _ =
   assert_equal (Card.int_to_card 0) @@ fst (Deck.draw_card deck);
-  assert_equal first_five_cards @@ fst (Deck.draw_cards deck 5)
+  assert_equal (List.rev first_five_cards) @@ fst (Deck.draw_cards deck 5);
+  assert_raises 
+    (Failure "No cards left in deck") 
+    (fun () -> Deck.draw_card (snd (Deck.draw_cards deck 52)));
+  assert_raises
+    (Failure "Cannot draw negative number of cards")
+    (fun () -> Deck.draw_cards deck (-1));
+  assert_raises 
+    (Failure "Not enough cards left in deck")
+    (fun () -> Deck.draw_cards deck 53)
 
 let test_of_7_cards _ =
   assert_equal 6 @@ Card_set.value_of_hand hand1;
@@ -91,6 +100,14 @@ let test_compare_hands _ =
   assert_equal true @@ (Card_set.compare hand1 hand3 < 0);
   assert_equal true @@ (Card_set.compare hand2 hand3 < 0)
 
+let test_card_set_exns _ =
+  assert_raises
+    (Failure "Hand Evaluation needs 5 cards")
+    (fun () -> Card_set.evaluate seven_card_list1);
+  assert_raises
+    (Invalid_argument "of_7_cards requires exactly 7 cards")
+    (fun () -> Card_set.of_7_cards first_five_cards)
+
 let series =
   "cards_tests" >:::
   [ "card_to_int" >:: test_card_to_int
@@ -99,4 +116,5 @@ let series =
   ; "deck_num_cards" >:: test_deck_num_cards
   ; "deck_draw_cards" >:: test_deck_draw_cards
   ; "of_7_cards" >:: test_of_7_cards
-  ; "compare_hands" >:: test_compare_hands]
+  ; "compare_hands" >:: test_compare_hands
+  ; "card_set_exns" >:: test_card_set_exns]
