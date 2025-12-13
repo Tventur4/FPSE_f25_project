@@ -65,6 +65,15 @@ let test_table_inactive_player _ =
   assert_equal player_super_evil_bot @@ Table.get_player_at_turn table_temp;
   assert_equal player_tobi @@ Table.get_player_at_turn (Table.advance_turn table_temp)
 
+let test_table_exns _ =
+  assert_raises
+    (Invalid_argument "Table.init: players list must not be empty")
+    (fun () -> Table.init []);
+  let table_folded = Table.fold_player (Table.fold_player (Table.fold_player table player_tobi) player_vrinda) player_timmy in
+  assert_raises
+    (Invalid_argument "Table.advance_turn: no active players")
+    (fun () -> Table.advance_turn table_folded)
+
 let series =
   "table_tests" >:::
   [ "player_add_chips" >:: test_player_add_chips
