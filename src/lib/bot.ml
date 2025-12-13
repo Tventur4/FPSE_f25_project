@@ -60,21 +60,30 @@ let determine_move_rule_bots (diff_index : int) (bracket : int) (stage : Card.be
     if bracket = 3 then Call else Fold
   | Ok remaining ->
     let current_bet_int = Chips.to_int current_bet in
-    let bet_made = not (Chips.(current_bet = Chips.zero)) in
-    let call_t1, call_t2 = get_call_thresholds diff_index in
-    let bet_a1, bet_a2, bet_a3, bet_a4 = get_bet_amounts diff_index in
-    let make_bet = Random.bool () in
     let chips_int = Chips.to_int chips in
+
+    let bet_made = not (Chips.(current_bet = Chips.zero)) in (* indicates if a bet has been made in the round *)
+    let make_bet = Random.bool () in
+
+    let call_t1, call_t2 = get_call_thresholds diff_index in (* factors that determine the thresholds for whether tht bot will call or not *)
+    let bet_a1, bet_a2, bet_a3, bet_a4 = get_bet_amounts diff_index in (* factors that determine how much the bot bets *)
+
     match bracket, stage, bet_made with
+    (* case: very low confidence *)
     | 0, _, _ -> Fold
+    (* cases: low confidence *)
     | 1, _, false -> Check
     | 1, _, true -> Fold 
+    (* cases: medium confidence *)
     | 2, _, false -> if make_bet then Bet (Chips.of_int (chips_int / bet_a1)) else Check
     | 2, _, true -> if current_bet_int < (chips_int / call_t1) then Call else Fold
+    (* cases: high confidence *)
+    (* subcases: high confidence with no bets made *)
     | 3, PreFlop, false -> Bet (Chips.of_int (chips_int / bet_a1))
     | 3, Flop, false -> Bet (Chips.of_int (chips_int / bet_a2))
     | 3, Turn, false -> Bet (Chips.of_int (chips_int / bet_a3))
     | 3, River, false -> Bet (Chips.of_int (chips_int / bet_a4))
+    (* subcases: high confidence with a bet made *)
     | 3, PreFlop, true -> if current_bet_int < (chips_int / call_t2) then Call else Fold
     | 3, Flop, true -> if current_bet_int < (chips_int / call_t2) then Call else Fold
     | 3, Turn, true -> 

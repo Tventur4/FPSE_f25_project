@@ -108,7 +108,7 @@ let prompt_for_setup () : (string * int * int) =
     | Some s -> Option.value (int_of_string_opt (String.strip s)) ~default:1
     | None -> 1
   in
-  printf "Set the difficulty of the bots (0-3):\n> ";
+  printf "Set the difficulty of the bots (0-3, 0 is the easiest):\n> ";
   Out_channel.flush stdout;
   let bot_diff =
     match In_channel.input_line In_channel.stdin with
