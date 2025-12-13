@@ -26,22 +26,29 @@ type t =
     river rounds, bets and raises must be equal to or greater than twice the value of [big_blind_value], an amount 
     called the big bet. *)
 
-(*deals a fresh hand using players at the teble. shuffles deck, deals hole cards, and posts blinds*)
 val init_game : Table.t -> t
-(** [init_game players big_blind_value] creates and initializes a new game of poker. *)
+(** [init_game players big_blind_value] creates and initializes a new game of poker. It shuffles the deck, deals hole 
+    cards, and posts blinds. *)
 
 val current_round : t -> Card.betting_round
+(** [current_round g] gets the betting round of [g]. *)
 
-(* advanceds to next game stage and deals appropraite cards ot the board*)
 val next_street : t -> t
+(** [next_street game] advances to the next game stage and deals appropraite cards to the board. *)
 
 val process_turn : t -> Card.action -> (t, string) result
+(** [process_turn game act] processes a player's turn--it returns the game if the action is legal and returns an 
+    error message otherwise. *)
 
 val check_winner_by_fold : t -> Player.t option
-(*advances from one round to another round. in here will be the entire logic of rounds
+(** [check_winner_by_fold game] checks if there is only one active player remaining, i.e. if there is a winner. 
+    If there is, it returns the winning player. *)
+
+(* advances from one round to another round. in here will be the entire logic of rounds
 preflop to flop to ... etc.
 a good portion of the entire logic shoudl be in here? hopefully broken down in sub functions idk
 *)
+
 (* val advance_round : Round.round_state -> Round.round_state *)
 
 (*not needed anymore because we have apply_action in round*)

@@ -18,11 +18,11 @@ val init : Table.t -> round_state
 (** [init players] creates a fresh betting round with all players active. *)
 
 val get_contribution : round_state -> Player.t -> Chips.t
-(** FILL THIS IN *)
+(** [get_contribution state player] gets the amount of chips [player] has contributed to the pot so far. *)
 
 val apply_action :
   round_state -> Player.t -> Card.action -> (round_state, string) result
-(** Applies a player's action and returns updated round state. *)
+(** [apply_action state player act] applies a player's action and returns the updated round state. *)
 
 
 (*table.mli takes care of this, not needed anymore??*)
@@ -30,6 +30,8 @@ val apply_action :
 * Returns the next player to act, or None if the round is over. *)
 
 val is_over : round_state -> bool
-(** Whether all players have acted and bets are equal or all but one folded. *)
+(** [is_over state] checks whether all players have acted and bets are equal or all but one folded. *)
 
 val reset_for_next_stage : round_state -> Card.betting_round -> round_state
+(** [rest_for_next_stage state new_stage] resets the betting requirements and clears player contribution for the 
+    new street. *)
