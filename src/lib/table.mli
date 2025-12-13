@@ -15,29 +15,29 @@ type table = {
   dealer : int;               (* index into players list *)
 } *)
 
-(*create ltable with players in seated order*)
- val init : Player.t list -> t
+val init : Player.t list -> t
+(** [init players] creates a table with the players in seated order. *)
 
-(*move dealer position one spot*)
 val rotate: t -> t
+(** [rotate t] moves the dealer position one spot. *)
 
-(*return current players at the table*)
 val current_players: t -> Player.t list
+(** [current_players t] returns the current players at the table. *)
 
-(*returns players who haven't folded/busted. either this method *)
 val get_active_players : t -> Player.t list
+(** [get_active_players t] returns players who haven't folded/busted. *)
 
-(*returns the player whose turn it is*)
 val get_player_at_turn : t -> Player.t
+(** [get_player_at_turn t] returns the player whose turn it is. *)
 
-(*advance turn marker to the next active player*)
 val advance_turn : t -> t
+(** [advance_turn t] advances the turn marker to the next active player. *)
 
-(*marks player p as folded in the table*)
 val fold_player : t -> Player.t -> t
+(** [fold_player t p] marks player [p] as folded in the table. *)
 
-(** Updates the players in the table. *)
 val update_players : t -> Player.t list -> t
+(** [update_players t next_players] updates the players in the table. *)
 
 (* val create : Player.t list -> table
 (** Create a table with players in given seating order; dealer starts at index 0. *)
