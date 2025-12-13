@@ -193,9 +193,10 @@ let next_street (game : t) : t =
   | Card.Showdown ->
       (* rotate dealer, reset community, start new round with fresh shuffled deck *)
       let rotated_table = Table.rotate game.table in
+      let rotated_table_reset = Table.reset_all_folded rotated_table in
       let fresh_deck = Deck.sorted_deck |> Deck.shuffle in
       (* Deal cards first *)
-      let players = Table.current_players rotated_table in
+      let players = Table.current_players rotated_table_reset in
       let (deck_after_deal, players_with_cards) =
         List.fold_map players ~init:fresh_deck ~f:(fun current_deck player ->
           let (cards, next_deck) = draw_n_cards current_deck 2 in
@@ -212,7 +213,7 @@ let next_street (game : t) : t =
       match post_blinds new_round with
       | Error msg -> failwith (Printf.sprintf "Failed to post blinds: %s" msg)
       | Ok round_state_with_blinds ->
-        { table = table_with_cards
+        { table = round_state_with_blinds.table
         ; deck = deck_after_deal
         ; community_cards = []
         ; pot = round_state_with_blinds.pot

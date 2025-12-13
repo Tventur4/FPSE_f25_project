@@ -39,6 +39,9 @@ val fold_player : t -> Player.t -> t
 val update_players : t -> Player.t list -> t
 (** [update_players t next_players] updates the players in the table. *)
 
+val reset_all_folded : t -> t
+(** [reset_all_folded table] resets all players' folded status to false for a new hand. *)
+
 (* val create : Player.t list -> table
 (** Create a table with players in given seating order; dealer starts at index 0. *)
 

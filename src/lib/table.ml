@@ -88,3 +88,8 @@ let fold_player (t: t) (p : Player.t) : t =
   {t with players = new_players}
 
 let update_players (t : t) (next_players : Player.t list) : t = {t with players = next_players}
+
+(*reset all players' folded status to false for a new hand*)
+let reset_all_folded (t : t) : t =
+  let new_players = List.map t.players ~f:(fun p -> { p with folded = false }) in
+  { t with players = new_players }

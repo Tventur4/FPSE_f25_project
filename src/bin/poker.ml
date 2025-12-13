@@ -145,7 +145,8 @@ and handle_showdown (game : Game.t) =
       ) in
 
       let new_table = Table.init next_players in
-      let new_game = Game.init_game new_table in
+      let new_table_reset = Table.reset_all_folded new_table in
+      let new_game = Game.init_game new_table_reset in
       game_loop new_game
       else 
         print_endline "Thanks for Playing OCaml Hold 'Em!"
